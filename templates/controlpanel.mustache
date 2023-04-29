@@ -1,0 +1,84 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_sic/detalles
+
+
+    Example context (json):{
+
+    }
+}}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css">
+<link rel="stylesheet" href="/blocks/sic/styles.css">
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<span id="templatedata" json="{{template.data}}"></span>
+
+<div type="text/x-template" id="app">
+
+    <div id="navigator-component">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" href="#">Active</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Link</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Link</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Disabled</a>
+            </li>
+        </ul>
+        <main-content inline-template id="content-component">
+            <h3>{message}</h3>
+        </main-content>
+    </div>
+
+
+</div>
+
+<!--<script src="./js/vueapp.js" type="module"></script>-->
+
+<script >
+
+    var templatedata = document.getElementById("templatedata");
+    var json = JSON.parse(templatedata.getAttribute("json"));
+
+    new Vue({
+        el: "#app",
+        data: {
+            content: json,
+            message: 'Holas'
+        },
+        render: function (createElement) {
+            return createElement('h1', this.message)
+        }
+    })
+</script>
+
+<style>
+    #content-component {
+        border-bottom: 1px solid #dee2e6;
+        border-left: 1px solid #dee2e6;
+        border-rigth: 1px solid #dee2e6;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
