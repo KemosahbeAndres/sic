@@ -25,24 +25,74 @@
  namespace block_sic\app\application;
 
 use block_sic\app\application\contracts\ilessons_repository;
-use block_sic\app\application\structures\lesson;
-use block_sic\app\application\structures\module;
-use block_sic\app\domain\lesson;
+use block_sic\app\domain\activity;
+use block_sic\app\domain\course;
 use block_sic\app\domain\module;
+use block_sic\app\domain\section;
+use block_sic\app\domain\session;
+use block_sic\app\utils\Arrays;
 
 final class attach_lesson_controller {
     private $lessons;
-
     public function __construct(ilessons_repository $repo) {
         $this->lessons = $repo;
     }
 
-    public function execute(lesson $lesson, module $module) {
-        $this->lessons->attach_to(
-            lesson::from_model($lesson),
-            module::from_model($module)
-        );
+    public function execute(session $params) {
+        $post = $params->get_post();
 
+        $course = $params->get_course();
+
+        if ($post->action != "attach_lesson") {
+            return;
+        }
+
+        $data = json_decode($post->data);
+
+        $activityid = intval($data->activityid);
+
+        if(!$this->activity_exists($activityid, $params->get_course()->get_activities())) {
+            return;
+        }
+
+        $section = $this->section_from_activity($activityid, $params->get_course());
+
+        if(is_null($section)) return;
+
+        $lesson = new \stdClass();
+        $lesson->id = intval($data->id);
+        $lesson->date = intval($data->date) + 86400;
+        $lesson->duration = intval($data->duration);
+
+        var_dump($lesson);
+
+        $this->lessons->attach_to($lesson, $section->get_id(), $activityid);
+
+    }
+
+    private function activity_exists(int $id, array $haystack): bool {
+        if($id <= 0) return false;
+        /** @var activity $activity */
+        foreach ($haystack as $activity){
+            if($activity->get_id() == $id){
+                echo "<br>FOUND<br>";
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function section_from_activity(int $id, course $course): ?section {
+        /** @var module $module */
+        foreach ($course->get_modules() as $module){
+            /** @var section $section */
+            foreach ($module->get_sections() as $section){
+                if($this->activity_exists($id, $section->get_activities())) {
+                    return $section;
+                }
+            }
+        }
+        return null;
     }
 
 }

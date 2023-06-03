@@ -76,21 +76,31 @@ class course {
         $this->mdlsections[] = $section;
     }
 
-   public function get_activities(): array {
+    public function get_mdl_activities(): array {
         $activities = array();
-        if(empty($modules = $this->get_modules())) {
-            foreach ($this->get_mdl_sections() as $section) {
-                foreach ($section->get_activities() as $activity) {
-                    $activities[] = $activity;
-                }
-            }
-        } else {
-            foreach ($modules as $module) {
-                foreach ($module->get_activities() as $activity) {
-                    $activities[] = $activity;
-                }
+        foreach ($this->get_mdl_sections() as $section) {
+            foreach ($section->get_activities() as $activity) {
+                $activities[] = $activity;
             }
         }
         return $activities;
+    }
+
+   public function get_activities(): array {
+        $activities = array();
+       /** @var module $module */
+       foreach ($this->modulos as $module) {
+           /** @var activity $activity */
+           foreach ($module->get_activities() as $activity) {
+                $activities[] = $activity;
+            }
+        }
+        return $activities;
+   }
+
+   public function get_excluded_sections(): array {
+        return array_filter($this->mdlsections, function (section $section) {
+            return !$section->assigned();
+        });
    }
 }

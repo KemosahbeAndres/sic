@@ -39,7 +39,7 @@ class lessons_repository implements ilessons_repository {
         $output->id = intval($id);
         $output->activity = intval($lesson->activity_id);
         //$output->name = strval($lesson->nombre);
-        $output->duration = intval($lesson->duration);
+        $output->duration = intval($lesson->duracion);
         $output->date = intval($lesson->fecha);
         return $output;
     }
@@ -69,10 +69,11 @@ class lessons_repository implements ilessons_repository {
         //$object->nombre = $strval(lesson->nombre);
         $object->duracion = intval($lesson->duration);
         $object->fecha = intval($lesson->date);
-        if (isset($lesson->id) && $DB->record_exists($table, ['id' => $lesson->id])) {
-            $object->id = $lesson->id;
+        if ($DB->record_exists($table, ['id' => intval($lesson->id)])) {
+            $object->id = intval($lesson->id);
             $DB->update_record($table, $object);
         } else {
+            unset($object->id);
             $DB->insert_record($table, $object);
         }
     }

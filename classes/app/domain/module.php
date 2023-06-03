@@ -31,7 +31,6 @@ class module {
     private $fechainicio;
     private $fechafin;
     private $secciones;
-    private $excluidas;
     private $asincronas;
     private $sincronas;
 
@@ -41,9 +40,12 @@ class module {
         $this->fechainicio = $startdate;
         $this->fechafin = $enddate;
         $this->secciones = Arrays::void();
-        $this->excluidas = Arrays::void();
         $this->sincronas = $sync;
         $this->asincronas = $async;
+    }
+
+    public function equal(module $module): bool {
+        return $this->id == $module->get_id();
     }
 
     public function get_id(): int {
@@ -63,11 +65,7 @@ class module {
     }
 
     public function add_section(section $section) {
-        if ($section->assigned()) {
-            $this->secciones[] = $section;
-        } else {
-            $this->excluidas[] = $section;
-        }
+        $this->secciones[] = $section;
     }
 
     public function get_sections(): array {
@@ -75,7 +73,9 @@ class module {
     }
 
     public function get_excluded_section(): array {
-        return $this->excluidas;
+        return array_filter($this->secciones, function (section $section) {
+            return !$section->assigned();
+        });
     }
 
     public function count_activities(): int {
@@ -126,9 +126,20 @@ class module {
         return intval($this->sincronas);
     }
 
+    public function in(section $section): bool {
+        foreach ($this->secciones as $seccion) {
+            if($section->equal($seccion)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function get_activities(): array {
         $activities = array();
+        /** @var section $section */
         foreach ($this->secciones as $section) {
+            /** @var activity $activity */
             foreach ($section->get_activities() as $activity) {
                 $activities[] = $activity;
             }

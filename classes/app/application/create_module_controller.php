@@ -53,10 +53,10 @@ final class create_module_controller {
         $module = new stdClass();
         $module->id = 0;
         $module->code = $mdata->code;
-        $module->startdate = $mdata->startdate + 86400;
-        $module->enddate = $mdata->enddate + 86400;
-        $module->sync = $mdata->sync;
-        $module->async = $mdata->async;
+        $module->startdate = intval($mdata->startdate) + 86400;
+        $module->enddate = intval($mdata->enddate) + 86400;
+        $module->sync = intval($mdata->sync);
+        $module->async = intval($mdata->async);
 
         $this->modules->attach_to($module, $course->get_id());
     }

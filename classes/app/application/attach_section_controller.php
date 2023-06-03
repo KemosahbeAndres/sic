@@ -25,10 +25,9 @@
  namespace block_sic\app\application;
 
 use block_sic\app\application\contracts\isections_repository;
-use block_sic\app\application\structures\module;
-use block_sic\app\application\structures\section;
 use block_sic\app\domain\module;
 use block_sic\app\domain\section;
+use block_sic\app\domain\session;
 
 final class attach_section_controller {
     private $sections;
@@ -37,11 +36,24 @@ final class attach_section_controller {
         $this->sections = $repo;
     }
 
-    public function execute(section $section, module $module) {
-        $this->sections->attach_to(
-            section::from_model($section),
-            module::from_model($module)
-        );
+    public function execute(session $params) {
+        $post = $params->get_post();
+
+        if ($post->action != "attach_section") {
+            return;
+        }
+
+        $data = json_decode($post->data);
+
+        $sectionid = intval($data->sectionid);
+        $moduleid = intval($data->moduleid);
+
+        if($sectionid <= 0 || $moduleid <= 0){
+            return;
+        }
+
+        $this->sections->attach_to($sectionid, $moduleid);
+
     }
 
 }

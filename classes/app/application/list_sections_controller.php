@@ -49,6 +49,7 @@ class list_sections_controller {
                 $section->assigned
             );
             $activitylist = $this->activities->related_to($section);
+            //echo "FOUND: ".count($activitylist);
             foreach ($activitylist as $activity) {
                 $actividad = new activity(
                     $activity->id,
@@ -57,6 +58,7 @@ class list_sections_controller {
                     $activity->instance,
                     $activity->type
                 );
+                //echo "<br>FOUND: ".$actividad->get_code() ;
                 $seccion->add_activity($actividad);
             }
             // Clases

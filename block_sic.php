@@ -121,7 +121,7 @@ class block_sic extends block_base{
             $this->content->footer = "<a href='{$url}' class='btn btn-primary btn-block'>GESTIONAR CURSO</a>";
         }
 
-        $this->content->text = $view->render();
+        //$this->content->text = $view->render();
 
         return $this->content;
 

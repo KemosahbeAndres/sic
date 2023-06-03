@@ -25,9 +25,7 @@
  namespace block_sic\app\application;
 
 use block_sic\app\application\contracts\isections_repository;
-use block_sic\app\application\structures\section;
-use block_sic\app\domain\module;
-use block_sic\app\domain\section;
+use block_sic\app\domain\session;
 
 final class dettach_section_controller {
     private $sections;
@@ -36,10 +34,23 @@ final class dettach_section_controller {
         $this->sections = $repo;
     }
 
-    public function execute(section $section) {
-        $this->sections->dettach(
-            section::from_model($section)
-        );
+    public function execute(session $params) {
+        $post = $params->get_post();
+
+        if ($post->action != "dettach_section") {
+            return;
+        }
+
+        $data = json_decode($post->data);
+
+        $sectionid = intval($data->sectionid);
+
+        if($sectionid <= 0){
+            return;
+        }
+
+        $this->sections->dettach($sectionid);
+
     }
 
 }

@@ -31,6 +31,7 @@ use block_sic\app\application\contracts\imodules_repository;
 use block_sic\app\application\contracts\isections_repository;
 use block_sic\app\domain\course;
 use block_sic\app\domain\module;
+use block_sic\app\domain\section;
 
 class consult_course_controller {
     private $courses;
@@ -65,6 +66,8 @@ class consult_course_controller {
 
         $modulelist = $this->modules->related_to($courseid);
 
+        //echo "<br> module count: " . count($modulelist);
+
         $secciones = $this->sectionloader->execute(
             $this->sections->from($courseid)
         );
@@ -84,7 +87,10 @@ class consult_course_controller {
                 $secciones = $this->sectionloader->execute(
                     $this->sections->related_to($modulo->get_id())
                 );
+                //echo "<br>FOUND in module:" . count($secciones);
+                /** @var section $seccion */
                 foreach ($secciones as $seccion) {
+                    //var_dump($seccion->get_name());
                     // Agregar al modulo
                     if ($seccion->assigned()) {
                         $modulo->add_section($seccion);

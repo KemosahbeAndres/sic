@@ -59,6 +59,9 @@ class lesson {
         return $this->id;
     }
 
+    public function get_name(): string {
+        return $this->activity->get_code();
+    }
 
     public function get_date(): int {
         return $this->date;

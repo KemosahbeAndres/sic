@@ -37,7 +37,7 @@ class section {
      */
     public function __construct(int $id, string $name, bool $assigned) {
         $this->id = $id;
-        $this->name = $name;
+        $this->name = trim($name);
         $this->assigned = $assigned;
         $this->activities = array();
         $this->lessons = array();
@@ -107,6 +107,10 @@ class section {
      */
     public function get_lessons(): array {
         return $this->lessons;
+    }
+
+    public function count_lessons(): int {
+        return count($this->lessons);
     }
 
     public function assigned(): bool {

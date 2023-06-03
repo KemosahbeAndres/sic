@@ -115,6 +115,12 @@ $changestates = new \block_sic\app\application\change_state_controller($states);
 
 $deletemodule = new delete_module_controller($modules);
 
+$sectionattacher = new block_sic\app\application\attach_section_controller($sections);
+
+$sectiondettacher = new \block_sic\app\application\dettach_section_controller($sections);
+
+$lessonattacher = new \block_sic\app\application\attach_lesson_controller($lessons);
+
 $view = new controlpanel_view();
 
 $params = new \block_sic\app\domain\session(
@@ -136,6 +142,12 @@ $view->post('create_module', $modulecreator, $view::$MANAGER);
 $view->post('modify_module', $moduleeditor, $view::$MANAGER);
 
 $view->post('delete_module', $deletemodule, $view::$MANAGER);
+
+$view->post('attach_section', $sectionattacher, $view::$MANAGER);
+
+$view->post('dettach_section', $sectiondettacher, $view::$MANAGER);
+
+$view->post('attach_lesson', $lessonattacher, $view::$MANAGER);
 
 ?>
 

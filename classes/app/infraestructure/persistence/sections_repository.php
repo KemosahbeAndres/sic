@@ -72,7 +72,7 @@ class sections_repository implements isections_repository {
         $object = new stdClass();
         $object->id_modulo = $moduleid;
         $object->section_id = $sectionid;
-        if ($DB->record_exists('sic_secciones', ['section_id' => $sectionid])) {
+        if ($DB->record_exists('sic_asignaciones', ['section_id' => $sectionid])) {
             $record = $DB->get_record('sic_asignaciones', ['section_id' => $sectionid], '*', MUST_EXISTS);
             $object->id = $record->id;
             $object->created = $record->created;
