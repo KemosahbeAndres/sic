@@ -26,17 +26,18 @@ namespace block_sic\app\infraestructure\persistence;
 
 use block_sic\app\application\contracts\ilessons_repository;
 use block_sic\app\utils\Arrays;
+use dml_exception;
 use stdClass;
 
 class lessons_repository implements ilessons_repository {
     /**
-     * @throws \dml_exception
+     * @throws dml_exception
      */
     public function by_id(int $id): object {
         global $DB;
         $lesson = $DB->get_record('sic_clases', ['id' => $id], '*', 'MUST_EXISTS');
         $output = new stdClass();
-        $output->id = intval($id);
+        $output->id = $id;
         $output->activity = intval($lesson->activity_id);
         //$output->name = strval($lesson->nombre);
         $output->duration = intval($lesson->duracion);
@@ -45,12 +46,12 @@ class lessons_repository implements ilessons_repository {
     }
 
     /**
-     * @throws \dml_exception
+     * @throws dml_exception
      */
     public function related_to(int $sectionid): array {
         global $DB;
         $output = Arrays::void();
-        $records = $DB->get_records('sic_clases', ['section_id' => $sectionid], 'id ASC', '*');
+        $records = $DB->get_records('sic_clases', ['section_id' => $sectionid], 'id ASC');
         foreach ($records as $record) {
             $output[] = $this->by_id($record->id);
         }
@@ -58,14 +59,14 @@ class lessons_repository implements ilessons_repository {
     }
 
     /**
-     * @throws \dml_exception
+     * @throws dml_exception
      */
     public function attach_to(object $lesson, int $sectionid, int $activityid) {
         global $DB;
         $table = 'sic_clases';
         $object = new stdClass();
-        $object->section_id = intval($sectionid);
-        $object->activity_id = intval($activityid);
+        $object->section_id = $sectionid;
+        $object->activity_id = $activityid;
         //$object->nombre = $strval(lesson->nombre);
         $object->duracion = intval($lesson->duration);
         $object->fecha = intval($lesson->date);
@@ -79,7 +80,7 @@ class lessons_repository implements ilessons_repository {
     }
 
     /**
-     * @throws \dml_exception
+     * @throws dml_exception
      */
     public function dettach(int $lessonid) {
         global $DB;

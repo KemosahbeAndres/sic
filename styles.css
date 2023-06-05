@@ -1,3 +1,63 @@
+ul, ol {
+    -webkit-margin-start: 0;
+}
+
+#page,
+#region-main{
+    background-color: rgb(242 242 242);
+    overflow-x: visible;
+}
+
+/*Rules from Bootstrap*/
+
+.vstack {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    align-self: stretch;
+}
+
+.hstack {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    align-self: stretch;
+}
+
+.gap-1 {
+    gap: .25rem!important;
+}
+.gap-2 {
+    gap: .5rem!important;
+}
+.gap-3 {
+    gap: 1rem!important;
+}
+.gap-4 {
+    gap: 1.5rem!important;
+}
+.gap-5 {
+    3rem!important;
+}
+
+.input-group-text {
+    border-right: none;
+}
+
+/*Rules from Bootstrap*/
+
+#app ul.nav {
+    border-radius: 4px;
+}
+
+#app ul.nav .nav-item {
+    border: 1px solid rgba(0, 0, 0, .125);
+    border-radius: 4px;
+}
+
+#app ul.nav .nav-item .nav-link {
+    border-radius: 4px;
+}
 
 .grid {
     display: inline-grid;
@@ -27,6 +87,11 @@
     border-radius: 4px;
 }
 
+.modal-size-md {
+    width: 60vw;
+    max-width: 60vw;
+}
+
 .input-group-text {
     border-radius: 4px 0 0 4px;
 }
@@ -43,6 +108,10 @@
     box-shadow: none;
 }
 
+.nav .nav-item {
+    background-color: white;
+}
+
 #region-main {
     padding: 0;
     border: 0;
@@ -53,8 +122,8 @@
 }
 
 #tab-content {
-    border: 1px solid rgba(0, 0, 0, .125);
-    border-top: none;
+    /*border: 1px solid rgba(0, 0, 0, .125);*/
+    /*border-top: none;*/
     padding: 0;
 }
 
@@ -68,31 +137,35 @@
 #module-content {
     padding: 0;
 }
-#course-data .table,
 #course-content .table,
 #sections-content .table,
 #module-content .table {
     margin-bottom: 0;
-    border: none;
     border-radius: 0;
+    border: 1px solid rgba(0, 0, 0, .125);
 }
-.table-title {
-    /*border: 1px solid rgba(0, 0, 0, .125);*/
+
+#course-data .table-title,
+#course-data table.table {
     border: none;
+    margin: 0;
+}
+
+.table-title {
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, .125);
     margin-bottom: 0;
     padding: .4em;
-    padding-top: .8em;
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
     font-weight: bold;
     text-align: center;
 }
 
-.table {
-    /*border: 1px solid rgba(0, 0, 0, .125);*/
-    border: none;
-    border-bottom-left-radius: 4px;
-    border-bottom-right-radius: 4px;
+table.table {
+    border: 1px solid rgba(0, 0, 0, .125);
+    border-radius: 0;
+    background-color: white;
 }
 
 table.table thead th {

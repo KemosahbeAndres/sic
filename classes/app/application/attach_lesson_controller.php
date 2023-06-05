@@ -30,7 +30,7 @@ use block_sic\app\domain\course;
 use block_sic\app\domain\module;
 use block_sic\app\domain\section;
 use block_sic\app\domain\session;
-use block_sic\app\utils\Arrays;
+use stdClass;
 
 final class attach_lesson_controller {
     private $lessons;
@@ -51,7 +51,7 @@ final class attach_lesson_controller {
 
         $activityid = intval($data->activityid);
 
-        if(!$this->activity_exists($activityid, $params->get_course()->get_activities())) {
+        if(!$this->activity_exists($activityid, $course->get_activities())) {
             return;
         }
 
@@ -59,7 +59,7 @@ final class attach_lesson_controller {
 
         if(is_null($section)) return;
 
-        $lesson = new \stdClass();
+        $lesson = new stdClass();
         $lesson->id = intval($data->id);
         $lesson->date = intval($data->date) + 86400;
         $lesson->duration = intval($data->duration);
@@ -75,7 +75,7 @@ final class attach_lesson_controller {
         /** @var activity $activity */
         foreach ($haystack as $activity){
             if($activity->get_id() == $id){
-                echo "<br>FOUND<br>";
+                //echo "<br>FOUND<br>";
                 return true;
             }
         }

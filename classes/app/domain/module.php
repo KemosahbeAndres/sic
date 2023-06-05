@@ -86,38 +86,6 @@ class module {
         return intval($total);
     }
 
-    public function get_completed_activities(): int {
-        $completadas = 0;
-        foreach ($this->secciones as $seccion) {
-            $completadas += $seccion->get_completed_activities();
-        }
-        return intval($completadas);
-    }
-
-    public function get_module_connection_time(): int {
-        $total = 0;
-        foreach ($this->secciones as $seccion) {
-            $total += $seccion->get_dedication_time();
-        }
-        return intval($total);
-    }
-
-    public function get_module_progress(): int {
-        $total = $this->count_activities();
-        $completadas = $this->get_completed_activities();
-        return intval( ($completadas / $total) * 100);
-    }
-
-    public function get_module_score(): int {
-        $total = 0;
-        $score = 0;
-        foreach ($this->secciones as $seccion) {
-            $total += $seccion->get_evalued_amount();
-            $score += $seccion->get_score_amount();
-        }
-        return intval( $score / $total );
-    }
-
     public function get_async_amount(): int {
         return intval($this->asincronas);
     }
@@ -147,16 +115,26 @@ class module {
         return $activities;
     }
 
-    public function to_array(): array {
-        return [
-            'id' => $this->id,
-            'codigoModulo' => $this->codigo,
-            'fechaInicio' => $this->fechainicio,
-            'fechaFin' => $this->fechafin,
-            'tiempo_conexion' => $this->get_module_connection_time(),
-            'notaModulo' => $this->get_module_score(),
-            'cantActividadSincrona' => $this->get_sync_amount(),
-            'cantActividadAsincrona' => $this->get_async_amount()
+    public function get_lessons(): array {
+        $lessons = array();
+        /** @var section $section */
+        foreach ($this->secciones as $section) {
+            /** @var lesson $lesson */
+            foreach ($section->get_lessons() as $lesson) {
+                $lessons[] = $lesson;
+            }
+        }
+        return $lessons;
+    }
+
+    public function toObject(): object {
+        return (object)[
+            'id' => $this->get_id(),
+            'code' => $this->get_code(),
+            'startdate' => $this->get_startdate(),
+            'enddate' => $this->get_enddate(),
+            'sync' => $this->get_sync_amount(),
+            'async' => $this->get_async_amount()
         ];
     }
 

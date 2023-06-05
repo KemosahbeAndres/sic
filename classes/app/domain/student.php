@@ -185,4 +185,56 @@ final class student extends user {
         return count($this->completions);
     }
 
+    public function toObject(): object {
+        $modules = array();
+        /** @var module $module */
+        foreach ($this->get_course()->get_modules() as $module){
+            $modulo = $module->toObject();
+            $activities = array();
+            /** @var activity $activity */
+            foreach ($module->get_activities() as $activity) {
+                if($activity->is_mandatory()){
+                    /** @var activity_completion $completion */
+                    foreach ($this->completions as $completion) {
+                        if($completion->get_activity()->equal($activity)){
+                            $actividad = $activity->toObject();
+                            $actividad->completed = $completion->completed() ? "Si" : "No";
+                            $activities[] = $actividad;
+                            break;
+                        }
+                    }
+                }
+            }
+            $modulo->activities = $activities;
+            $lessons = array();
+            /** @var lesson $lesson */
+            foreach ($module->get_lessons() as $lesson) {
+                $clase = $lesson->toObject();
+                /** @var lesson_attendance $attendance */
+                foreach ($this->attendances as $attendance) {
+                    if($attendance->get_lesson()->equal($lesson)) {
+                        $clase->present = $attendance->is_present() ? "Si" : "No";
+                        $lessons[] = $clase;
+                        break;
+                    }
+                }
+            }
+            $modulo->lessons = $lessons;
+            $modules[] = $modulo;
+        }
+        return (object) [
+            'id' => $this->get_id(),
+            'name' => $this->get_name(),
+            'run' => $this->get_full_rut(),
+            'progress' => $this->get_progress(),
+            'time' => $this->get_connection_time(),
+            'state' => $this->get_state()->get_state(),
+            'studying' => $this->get_state()->studying(),
+            'reproved' => $this->get_state()->reproved(),
+            'approved' => $this->get_state()->approved(),
+            'completions' => $this->count_completions(),
+            'modules' => $modules
+        ];
+    }
+
 }

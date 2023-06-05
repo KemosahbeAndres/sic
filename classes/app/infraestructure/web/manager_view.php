@@ -24,7 +24,11 @@
 
 namespace block_sic\app\infraestructure\web;
 
+use block_sic\app\domain\lesson;
+use block_sic\app\domain\module;
+use block_sic\app\domain\section;
 use block_sic\app\domain\session;
+use block_sic\app\domain\student;
 use block_sic\app\utils\Arrays;
 use block_sic\app\utils\Dates;
 use stdClass;
@@ -73,19 +77,9 @@ class manager_view extends view {
 
         $manager = new stdClass();
 
+        /** @var student $user */
         foreach ($studentslist as $user) {
-                $student = new stdClass();
-                $student->id = $user->get_id();
-                $student->nombre = $user->get_name();
-                $student->run = $user->get_full_rut();
-                $student->avance = $user->get_progress();
-                $student->tiempo = $user->get_connection_time();
-                $state = $user->get_state();
-                $student->completions = $user->count_completions();
-                $student->estado = $state->get_state();
-                $student->studying = $state->studying();
-                $student->reproved = $state->reproved();
-                $student->approved = $state->approved();
+                $student = $user->toObject();
                 $students[] = $student;
         }
 
@@ -119,6 +113,7 @@ class manager_view extends view {
         $actividades = Arrays::void();
         $lessons = Arrays::void();
 
+        /** @var module $module */
         foreach ($curso->get_modules() as $module) {
             $modulo = new stdClass;
             $modulo->editting = false;
@@ -130,6 +125,7 @@ class manager_view extends view {
             $modulo->async = $module->get_async_amount();
             $modulo->sections = Arrays::void();
 
+            /** @var section $section */
             foreach ($module->get_sections() as $section) {
                 $seccion = new stdClass();
                 $seccion->id = $section->get_id();
@@ -149,12 +145,15 @@ class manager_view extends view {
                 }
 
                 $seccion->lessons = Arrays::void();
+                /** @var lesson $lesson */
                 foreach ($section->get_lessons() as $lesson) {
                     $leccion = new stdClass();
                     $leccion->id = $lesson->get_id();
                     $leccion->name = $lesson->get_name();
+                    $leccion->activity = $lesson->get_activity()->get_id();
                     $leccion->date = Dates::format($lesson->get_date());
                     $leccion->duration = $lesson->get_duration();
+                    $leccion->section = $section->get_name();
                     $lessons[] = $leccion;
                     $seccion->lessons[] = $leccion;
                 }
@@ -169,6 +168,7 @@ class manager_view extends view {
 
         // Secciones.
         // Actividades.
+        /** @var section $section */
         foreach ($curso->get_excluded_sections() as $section) {
             $seccion = new stdClass();
             $seccion->id = $section->get_id();
@@ -187,10 +187,12 @@ class manager_view extends view {
             $seccion->activitiesCount = count($seccion->activities);
 
             $seccion->lessons = Arrays::void();
+            /** @var lesson $lesson */
             foreach ($section->get_lessons() as $lesson) {
                 $leccion = new stdClass();
                 $leccion->id = $lesson->get_id();
                 $leccion->name = $lesson->get_name();
+                $leccion->activity = $lesson->get_activity()->get_id();
                 $leccion->date = Dates::format($lesson->get_date());
                 $leccion->duration = $lesson->get_duration();
                 $leccion->section = $section->get_name();
@@ -206,7 +208,6 @@ class manager_view extends view {
         $template->excluded = $secciones;
         $template->sections = $allSections;
         $template->activities = $actividades;
-        var_dump($lessons);
         $template->lessons = $lessons;
         $template->totalact = count($actividades);
         $template->courseid = $curso->get_id();
@@ -217,11 +218,11 @@ class manager_view extends view {
         self::$template = $template;
         return <<<HTML
             <span id="templatedata" json='$template->data'></span>
-            <div id="app">
-                <div id="course-data" class="card mb-3">
+            <div id="app" class="vstack gap-3">
+                <div id="course-data" class="card">
                     <div class="card-body">
                         <h4 class="table-title">Curso</h4>
-                        <table class="table table-striped table-hover">
+                        <table class="table table-hover">
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -241,7 +242,7 @@ class manager_view extends view {
                         </table>
                     </div>
                 </div>
-                <ul class="nav nav-tabs nav-fill ml-0">
+                <ul class="nav nav-pills nav-fill gap-3">
                   <li class="nav-item">
                     <a class="nav-link" :class="{ active: courseActive }" :href="content.redirecturl+'&tab=1'">Participantes</a>
                   </li>
@@ -257,9 +258,9 @@ class manager_view extends view {
                 </ul>
                 <div id="tab-content">
                     <transition name="fade">
-                        <div id="course-content" v-show="courseActive">
+                        <div id="course-content" class="vstack gap-3" v-show="courseActive">
                             <h4 class="table-title">Gestor</h4>
-                            <table class="table table-striped table-hover">
+                            <table class="table table-hover">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
@@ -276,7 +277,7 @@ class manager_view extends view {
                                 </tbody>
                             </table>
                             <h4 class="table-title">Profesores</h4>
-                            <table class="table table-striped table-hover">
+                            <table class="table table-hover">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
@@ -293,9 +294,10 @@ class manager_view extends view {
                                 </tbody>
                             </table>
                             <h4 class="table-title">Alumnos</h4>
-                            <table id="alumnos" class="table table-striped table-hover">
+                            <table id="alumnos" class="table table-hover">
                                 <thead>
                                     <tr>
+                                        <th>Acciones</th>
                                         <th>ID</th>
                                         <th>Nombre</th>
                                         <th>RUT</th>
@@ -312,17 +314,18 @@ class manager_view extends view {
                                 </thead>
                                 <tbody>
                                         <tr v-for="student in content.students" :key="student.id">
+                                            <td><input type="button" value="Abrir" class="btn btn-primary" @click="openStudent(student)" data-bs-toggle="modal" data-bs-target="#studentDetailsModal" /></td>
                                             <td>{{student.id}}</td>
-                                            <td>{{student.nombre}}</td>
+                                            <td>{{student.name}}</td>
                                             <td>{{student.run}}</td>
-                                            <td>{{student.avance}}</td>
-                                            <td>{{student.tiempo}}</td>
-                                            <td v-show="!edittingStates">{{student.estado}}</td>
+                                            <td>{{student.progress}}</td>
+                                            <td>{{student.time}}</td>
+                                            <td v-show="!edittingStates">{{student.state}}</td>
                                             <td v-show="edittingStates">
-                                                <select v-model="student.estado" class="form-select">
-                                                    <option :selected="student.estado=='cursando'" value="cursando">cursando</option>
-                                                    <option :selected="student.estado=='reprobado'" value="reprobado">reprobado</option>
-                                                    <option :selected="student.estado=='aprobado'" value="aprobado">aprobado</option>
+                                                <select v-model="student.state" class="form-select">
+                                                    <option :selected="student.state=='cursando'" value="cursando">cursando</option>
+                                                    <option :selected="student.state=='reprobado'" value="reprobado">reprobado</option>
+                                                    <option :selected="student.state=='aprobado'" value="aprobado">aprobado</option>
                                                 </select>
                                             </td>
                                         </tr>
@@ -340,16 +343,12 @@ class manager_view extends view {
                                         </tr>
                                 </tbody>
                             </table>
-                            <form name="statesForm" :action="content.redirecturl+'&tab=1'" method="post">
-                                <input type="hidden" name="action" value="change_states" required>
-                                <input type="hidden" name="data" required>
-                            </form>
                         </div>
                     </transition>
                     <transition name="fade">
-                        <div id="module-content" v-show="moduleActive">
+                        <div id="module-content" class="vstack gap-3" v-show="moduleActive">
                             <h4 class="table-title">Modulos</h4>
-                            <table class="table table-striped" :class="{'table-hover': !addingModules}">
+                            <table class="table table-hover" :class="{'table-hover': !addingModules}">
                                 <thead>
                                     <tr>
                                         <th>Acciones</th>
@@ -364,11 +363,8 @@ class manager_view extends view {
                                 <tbody>
                                     <tr v-for="module of content.modules" :key="module.id">
                                         <td>
-                                            <input v-show="!module.editting" type="button" class="btn btn-primary" value="Editar" @click="editModule(module.id)" :disabled="!canEditModule"/>
-                                            <input v-show="module.editting" type="button" class="btn btn-success" value="Guardar" @click="submitEditModule(module.id)"/>
-                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#deleteconfirmmodal" @click="selectModule(module.id)">
-                                                Borrar
-                                            </button>
+                                            <input type="button" class="btn btn-primary" value="Editar" data-bs-toggle="modal" data-bs-target="#editModuleModal" @click="selectModule(module)" />
+                                            <input type="button" class="btn btn-danger" value="Borrar" data-bs-toggle="modal" data-bs-target="#deleteconfirmmodal" @click="selectModule(module)">
                                         </td>
                                         <td v-show="!module.editting">{{module.id}}</td><td v-show="module.editting"><input type="number" class="form-control" :value="module.id" disabled/></td>
                                         <td v-show="!module.editting">{{module.code}}</td><td v-show="module.editting"><input type="text" class="form-control" v-model="module.code" required/></td>
@@ -401,28 +397,13 @@ class manager_view extends view {
                                 <input type="hidden" name="action" value="" />
                                 <input type="hidden" name="data" value="" />
                             </form>
-                            <div class="modal fade" id="deleteconfirmmodal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="deleteconfirmmodal">Modal title</h5>
-                                        </div>
-                                        <div class="modal-body">
-                                            <h4>Desea eliminar este modulo ID {{moduleid}}</h4>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancelar</button>
-                                            <button type="button" class="btn btn-danger" @click="deleteModule()">Borrar</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            
                         </div>
                     </transition>
                     <transition name="fade">
-                        <div id="sections-content" v-show="sectionActive">
+                        <div id="sections-content" class="vstack gap-3" v-show="sectionActive">
                             <h4 class="table-title">Secciones Sin Asignar</h4>
-                            <table class="table table-striped">
+                            <table class="table table-hover">
                                 <thead>
                                     <tr>
                                         <th>Acciones</th>
@@ -446,7 +427,7 @@ class manager_view extends view {
                                 </tbody>
                             </table>
                             <h4 class="table-title">Secciones Asignadas</h4>
-                            <table class="table table-striped" v-for="module in content.modules" :key="module.id">
+                            <table class="table table-hover" v-for="module in content.modules" :key="module.id">
                                 <thead>
                                     <tr>
                                         <th colspan="5">Modulo: {{module.code}} (ID {{module.id}})</th>
@@ -478,9 +459,9 @@ class manager_view extends view {
                         </div>
                     </transition>   
                     <transition name="fade">
-                        <div id="lessonContent" v-show="lessonActive">
+                        <div id="lessonContent" class="vstack gap-3" v-show="lessonActive">
                             <h4 class="table-title">Clases</h4>
-                            <table class="table table-striped table-hover">
+                            <table class="table table-hover">
                                 <thead>
                                     <tr>
                                         <th>Acciones</th>
@@ -493,12 +474,18 @@ class manager_view extends view {
                                 </thead>
                                 <tbody>
                                     <tr v-for="lesson in content.lessons" :key="lesson.id">
-                                        <td></td>
+                                        <td>
+                                            <input type="button" class="btn btn-primary" value="Modificar" data-bs-toggle="modal" data-bs-target="#editLessonModal" @click="selectLessonForEdit(lesson)"/>
+                                            <input type="button" class="btn btn-danger" value="Eliminar" data-bs-toggle="modal" data-bs-target="#confirmLessonDeleteModal" @click="selectLesson(lesson)" />
+                                        </td>
                                         <td>{{lesson.id}}</td>
                                         <td>{{lesson.name}}</td>
                                         <td>{{lesson.date}}</td>
                                         <td>{{lesson.duration}}</td>
                                         <td>{{lesson.section}}</td>
+                                    </tr>
+                                    <tr v-show="noLessons">
+                                        <td colspan="6" class="text-center">No existen clases!</td>
                                     </tr>
                                     <tr v-show="addingLesson">
                                         <td></td>
@@ -506,11 +493,11 @@ class manager_view extends view {
                                         <td>
                                             <select v-model="newlesson.activityid">
                                                 <option value="0" selected>Selecciona una actividad</option>
-                                                <option v-for="activity in content.activities" v-if="activity.mandatory" :value="activity.id" :key="activity.id">{{activity.name}} ({{activity.section}})</option>
+                                                <option v-for="activity in content.activities" v-if="activity.mandatory" :value="activity.id" :key="activity.id">[ID {{activity.id}}] {{activity.name}} ({{activity.section}})</option>
                                             </select>
                                         </td>
                                         <td><input type="date" v-model="newlesson.date"></td>
-                                        <td><input type="number" v-model="newlesson.duration"></td>
+                                        <td><input type="number" v-model="newlesson.duration" min="0"></td>
                                         <td></td>
                                     </tr>
                                     <tr>
@@ -522,6 +509,48 @@ class manager_view extends view {
                             </table>
                         </div>
                     </transition>
+                    
+                    <div class="modal fade" id="editModuleModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Editando Modulo</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="container-fluid vstack gap-2">
+                                        <div class="input-group">
+                                            <span class="input-group-text">ID</span>
+                                            <input name="id" type="number" v-model="moduleSelected.id" class="form-control" disabled>
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-text">Codigo</span>
+                                            <input name="code" type="text" v-model="moduleSelected.code" class="form-control">
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-text">Fecha Inicio</span>
+                                            <input name="startdate" type="date" v-model="moduleSelected.startdate" class="form-control">                          
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-text">Fecha Fin</span>
+                                            <input name="enddate" type="date" v-model="moduleSelected.enddate" class="form-control">                          
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-text">Actividades Sincronas</span>
+                                            <input name="sync" type="number" v-model="moduleSelected.sync" class="form-control">                          
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-text">Actividades Asincronas</span>
+                                            <input name="async" type="number" v-model="moduleSelected.async" class="form-control">                          
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="button" class="btn btn-success" data-bs-toggle="modal" href="#editModuleModal" @click="submitEditModule()">Guardar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     
                     <div class="modal fade" id="sectionModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
@@ -543,13 +572,120 @@ class manager_view extends view {
                         </div>
                     </div>
                     
-                    <div class="modal fade" id="sectionDetailsModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal fade" id="studentDetailsModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-size-md">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Detalles Alumno</h5>
+                                </div>
+                                <div class="modal-body vstack gap-2">
+                                    <div class="container-fluid mb-2">
+                                    <h4 class="table-title">Alumno</h4>
+                                        <table class="table table-striped table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Nombre</th>
+                                                    <th>Rut</th>
+                                                    <th>Avance</th>
+                                                    <th>Tiempo Conexion</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>{{studentSelected.id}}</td>
+                                                    <td>{{studentSelected.name}}</td>                                                            
+                                                    <td>{{studentSelected.run}}</td>                                                            
+                                                    <td>{{studentSelected.progress}}</td>                                                            
+                                                    <td>{{studentSelected.time}}</td>                                                            
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div v-for="module in studentSelected.modules" :key="module.id">
+                                        <div class="container-fluid">
+                                            <h4 class="table-title">Modulo</h4>
+                                            <table class="table table-striped table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th>Codigo</th>
+                                                        <th>Fecha Inicio</th>
+                                                        <th>Fecha Fin</th>
+                                                        <th>Actividades Sincronas</th>
+                                                        <th>Actividades Asincronas</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>{{module.id}}</td>
+                                                        <td>{{module.code}}</td>                                                            
+                                                        <td>{{module.startdate}}</td>                                                            
+                                                        <td>{{module.enddate}}</td>                                                            
+                                                        <td>{{module.sync}}</td>                                                            
+                                                        <td>{{module.async}}</td>                                                            
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="container-fluid">
+                                            <h5 class="table-title">Actividades {{module.code}}</h5>
+                                            <table class="table table-striped table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th>Nombre</th>
+                                                        <th>Completada</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr v-for="activity in module.activities" :key="activity.id">
+                                                        <td>{{activity.id}}</td>
+                                                        <td>{{activity.code}}</td>                                                            
+                                                        <td>{{activity.completed}}</td>                                                            
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="container-fluid">
+                                            <h5 class="table-title">Clases {{module.code}}</h5>
+                                            <table class="table table-striped table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th>Nombre</th>
+                                                        <th>Fecha</th>
+                                                        <th>Duración</th>
+                                                        <th>Asistió</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr v-for="lesson in module.lessons" :key="lesson.id">
+                                                        <td>{{lesson.id}}</td>
+                                                        <td>{{lesson.name}}</td>
+                                                        <td>{{lesson.date}}</td>                                                             
+                                                        <td>{{lesson.duration}}</td>                                                             
+                                                        <td>{{lesson.present}}</td>                                                             
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal fade" id="sectionDetailsModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title">Detalles Seccion "{{sectionSelected.name}}"</h5>
                                 </div>
-                                <div class="modal-body">
+                                <div class="modal-body vstack gap-2">
                                     <div class="container-fluid mb-2">
                                         <table class="table table-striped table-hover">
                                             <thead>
@@ -568,7 +704,7 @@ class manager_view extends view {
                                     </div>
                                     <div class="container-fluid">
                                         <h4 class="table-title">Actividades</h4>
-                                        <table class="table table-striped">
+                                        <table class="table table-striped table-hover">
                                             <thead>
                                                 <tr>
                                                     <th>ID</th>
@@ -585,6 +721,27 @@ class manager_view extends view {
                                             </tbody>
                                         </table>
                                     </div>
+                                    <div class="container-fluid">
+                                        <h4 class="table-title">Clases</h4>
+                                        <table class="table table-striped table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Nombre</th>
+                                                    <th>Fecha</th>
+                                                    <th>Duración</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="lesson in sectionSelected.lessons" :key="lesson.id">
+                                                    <td>{{lesson.id}}</td>
+                                                    <td>{{lesson.name}}</td>
+                                                    <td>{{lesson.date}}</td>                                                             
+                                                    <td>{{lesson.duration}}</td>                                                             
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -592,13 +749,105 @@ class manager_view extends view {
                             </div>
                         </div>
                     </div>
-                    <form :action="content.redirecturl + '&tab=3'" method="post" id="sectionForm">
-                        <input type="hidden" name="action" value="" />
-                        <input type="hidden" name="data" />
+                    
+                    <div class="modal fade" id="deleteconfirmmodal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteconfirmmodal">Confirmacion</h5>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="container-fluid"><p>¿Desea eliminar el siguiente modulo?</p></div>
+                                            <div class="container-fluid">
+                                                <p>ID: {{moduleSelected.id}}</p>
+                                                <p>Codigo: {{moduleSelected.code}}</p>
+                                                <p>Fecha Inicio: {{moduleSelected.startdate}}</p>
+                                                <p>Fecha Fin: {{moduleSelected.enddate}}</p>
+                                                <p>Actividades Sincronas: {{moduleSelected.sync}}</p>
+                                                <p>Actividades Asincronas: {{moduleSelected.async}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancelar</button>
+                                            <button type="button" class="btn btn-danger" @click="deleteModule()">Borrar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    
+                    <div class="modal fade" id="editLessonModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Editando Clase</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="container-fluid vstack gap-2">
+                                        <div class="input-group">
+                                            <span class="input-group-text">ID</span>
+                                            <input name="id" type="number" v-model="lessonSelected.id" class="form-control" disabled>
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-text">Nombre</span>
+                                            <select v-model="lessonSelected.activityid">
+                                                <option value="0" selected>Selecciona una actividad</option>
+                                                <option v-for="activity in content.activities" v-if="activity.mandatory" :value="activity.id" :key="activity.id">[ID {{activity.id}}] {{activity.name}} ({{activity.section}})</option>
+                                            </select>                        
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-text">Fecha</span>
+                                            <input name="date" type="date" v-model="lessonSelected.date" class="form-control">                          
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-text">Duración</span>
+                                            <input name="duration" type="number" v-model="lessonSelected.duration" class="form-control">                          
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="button" class="btn btn-success" data-bs-toggle="modal" href="#editLessonModal" @click="showLesson()">Guardar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal fade" id="confirmLessonDeleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Borrar Clase</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="container-fluid"><p>¿Desea eliminar la siguiente clase?</p></div>
+                                    <div class="container-fluid">
+                                        <p>ID: {{lessonSelected.id}}</p>
+                                        <p>Nombre: {{lessonSelected.name}}</p>
+                                        <p>Fecha: {{lessonSelected.date}}</p>
+                                        <p>Duración: {{lessonSelected.duration}}</p>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" href="#confirmLessonDeleteModal" >Borrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form name="statesForm" :action="content.redirecturl+'&tab=1'" method="post">
+                        <input type="hidden" name="action" value="change_states" required>
+                        <input type="hidden" name="data" required>
                     </form>
+                    
+                    <form :action="content.redirecturl + '&tab=3'" method="post" id="sectionForm">
+                        <input type="hidden" name="action" value="" required/>
+                        <input type="hidden" name="data" required/>
+                    </form>
+                    
                     <form :action="content.redirecturl + '&tab=4'" method="post" id="lessonForm">
-                        <input type="hidden" name="action" value="" />
-                        <input type="hidden" name="data" value="" />
+                        <input type="hidden" name="action" value="" required/>
+                        <input type="hidden" name="data" value="" required/>
                     </form>
                 </div>
             </div>
@@ -647,6 +896,14 @@ class manager_view extends view {
                         addingLesson: false,
                         canEditModule: true,
                         moduleid: 0,
+                        moduleSelected: {
+                            id: 0,
+                            code: "",
+                            startdate: "",
+                            enddate: "",
+                            sync: 0,
+                            async: 0,
+                        },
                         sectionOpen: false,
                         sectionSelected: {
                             id: 0,
@@ -656,29 +913,81 @@ class manager_view extends view {
                             activities: [],
                             lessons: [],
                         },
+                        lessonOpen: false,
+                        lessonSelected: {
+                            id: 0,
+                            name: "",
+                            date: "",
+                            duration: "",
+                            activityid: 0,
+                        },
+                        lessonid: 0,
+                        studentSelected: {
+                            id: 0,
+                            name: "",
+                            run: "",
+                            progress: 0,
+                            time: 0,
+                            state: "",
+                            completions: 0,
+                            modules: []
+                        }
                     },
                     computed: {
                         courseActive: function () {
-                            return this.content.tab == 1
+                            return this.content.tab === 1
                         },
                         moduleActive: function () {
-                            return this.content.tab == 2
+                            return this.content.tab === 2
                         },
                         sectionActive: function () {
-                            return this.content.tab == 3
+                            return this.content.tab === 3
                         },
                         lessonActive: function () {
-                            return this.content.tab == 4
+                            return this.content.tab === 4
                         },
                         maxEditting: function () {
                             return this.addingModules ^ this.edittingStates;
                         },
                         noModules: function () {
-                            return this.content.modules.length <= 0;
+                            return this.content.modules.length <= 0
+                        },
+                        noLessons: function(){
+                            return this.content.lessons.length <= 0
                         }
                     },
                     methods: {
-                        saveLesson: function (){
+                        openStudent: function (student) {
+                            this.studentSelected.id = student.id
+                            this.studentSelected.name = student.name
+                            this.studentSelected.run = student.run
+                            this.studentSelected.progress = student.progress
+                            this.studentSelected.time = student.time
+                            this.studentSelected.state = student.state
+                            this.studentSelected.completions = student.completions
+                            this.studentSelected.modules = student.modules
+                            
+                        },
+                        showLesson: function () {
+                            console.log(this.lessonSelected)
+                        },
+                        selectLessonForEdit: function (lesson) {
+                            this.selectLesson(lesson)
+                            this.newlesson.id = lesson.id
+                            this.newlesson.activityid = lesson.activity
+                            this.newlesson.date = lesson.date
+                            this.newlesson.duration = lesson.duration
+                            console.log(this.newlesson.id)
+                        },
+                        selectLesson: function (lesson) {
+                            this.lessonid = parseInt(lesson.id)
+                            this.lessonSelected.id = this.lessonid
+                            this.lessonSelected.name = lesson.name + ""
+                            this.lessonSelected.date = lesson.date
+                            this.lessonSelected.duration = lesson.duration
+                            this.lessonSelected.activityid = lesson.activity
+                        },
+                        saveLesson: function () {
                             let data = {
                                 id: parseInt(this.newlesson.id),
                                 activityid: parseInt(this.newlesson.activityid),
@@ -721,19 +1030,25 @@ class manager_view extends view {
                             this.sectionSelected.activitiesCount = section.activitiesCount;
                             this.sectionSelected.lessonsCount = section.lessonsCount;
                             this.sectionSelected.activities = section.activities;
+                            this.sectionSelected.lessons = section.lessons;
                             //sectionModal.toggle()
                         },
                         deleteModule: function () {
                             let data = {
-                                moduleid: this.moduleid
+                                moduleid: parseInt(this.moduleSelected.id)
                             }
                             moduleForm.children.action.value = "delete_module"
                             moduleForm.children.data.value = JSON.stringify(data)
                             document.body.append(moduleForm);
                             moduleForm.submit();
                         },
-                        selectModule: function (id) {
-                            this.moduleid = parseInt(id)
+                        selectModule: function (module) {
+                            this.moduleSelected.id = parseInt(module.id)
+                            this.moduleSelected.code = String(module.code)
+                            this.moduleSelected.startdate = module.startdate
+                            this.moduleSelected.enddate = module.enddate
+                            this.moduleSelected.sync = parseInt(module.sync)
+                            this.moduleSelected.async = parseInt(module.async)
                         },
                         toTimestamp: function (date) {
                             return Math.trunc(new Date(date).getTime() / 1000)
@@ -741,26 +1056,15 @@ class manager_view extends view {
                         toHours: function (time) {
                             return Math.trunc( time / 60 / 60 )
                         },
-                        submitEditModule: function (id) {
+                        submitEditModule: function () {
                             let dataobject = {
-                                id: 0,
-                                code: "",
-                                startdate: 0,
-                                enddate: 0,
-                                sync: 0,
-                                async: 0
-                            }
-                            for(let module of this.content.modules) {
-                                if(module.id == id) {
-                                    dataobject.id = parseInt(module.id),
-                                    dataobject.code = String(module.code),
-                                    dataobject.startdate = this.toTimestamp(module.startdate),
-                                    dataobject.enddate = this.toTimestamp(module.enddate),
-                                    dataobject.sync = parseInt(module.sync),
-                                    dataobject.async = parseInt(module.async)
-                                    break
-                                }
-                            }
+                                id: parseInt(this.moduleSelected.id),
+                                code: String(this.moduleSelected.code),
+                                startdate: this.toTimestamp(this.moduleSelected.startdate),
+                                enddate: this.toTimestamp(this.moduleSelected.enddate),
+                                sync: parseInt(this.moduleSelected.sync),
+                                async: parseInt(this.moduleSelected.async)
+                            }                                    
                             moduleForm.children.action.value = "modify_module";
                             moduleForm.children.data.value = JSON.stringify(dataobject);
                             document.body.append(moduleForm);

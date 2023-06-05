@@ -47,8 +47,8 @@ class change_state_controller {
             $found = $params->find_student($student->id);
 
             if (!is_null($found)) {
-                if($found->get_state()->get_state() != trim($student->estado)) {
-                    $state = $this->states->by_state(trim($student->estado));
+                if($found->get_state()->get_state() != trim($student->state)) {
+                    $state = $this->states->by_state(trim($student->state));
                     if(is_null($state)) {
                         $state = $this->states->by_code(1);
                     }

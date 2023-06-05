@@ -47,12 +47,18 @@ class lesson {
         $this->duration = $duration;
     }
 
-    public function object(): object {
+    public function toObject(): object {
         return (object) [
-            'id' => $this->id,
-            'date' => $this->date,
-            'duration' => $this->duration
+            'id' => $this->get_id(),
+            'name' => $this->get_name(),
+            'date' => $this->get_date(),
+            'duration' => $this->get_duration(),
+            'activity' => $this->get_activity()->toObject()
         ];
+    }
+
+    public function equal(lesson $lesson): bool {
+        return $lesson->get_id() == $this->get_id();
     }
 
     public function get_id(): int {
@@ -73,6 +79,10 @@ class lesson {
 
     public function present(): ?bool {
         return is_null($this->asistencia) ? false : $this->asistencia->present();
+    }
+
+    public function get_activity(): activity {
+        return $this->activity;
     }
 
 }

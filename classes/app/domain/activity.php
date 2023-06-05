@@ -51,7 +51,7 @@ class activity {
         return $this->id == $activity->get_id();
     }
 
-    public function object(): object {
+    public function toObject(): object {
         return (object) [
             'id' => $this->id,
             'code' => $this->code,

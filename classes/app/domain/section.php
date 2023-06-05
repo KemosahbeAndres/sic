@@ -116,4 +116,7 @@ class section {
     public function assigned(): bool {
         return $this->assigned;
     }
+    public function exists(activity $activity): bool {
+        return in_array($activity, $this->activities, true);
+    }
 }
