@@ -46,8 +46,6 @@ define('BLOCK_SIC_IGNORE_SESSION_TIME', 59);
 
 define('BLOCK_SIC_DEFAULT_REGEN_TIME', 60 * 15);
 
-
-
 class block_sic_manager{
 
 

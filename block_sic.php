@@ -116,9 +116,12 @@ class block_sic extends block_base{
         } else if ($me instanceof manager || $me instanceof teacher || $me instanceof moderator) {
 
             $url = new moodle_url('/blocks/sic/controlpanel.php', array('tab' => 1, 'courseid' => $COURSE->id, 'instance' => $this->instance->id));
+            $second = new moodle_url('/blocks/sic/dashboard.php', array('courseid' => $COURSE->id, 'instance' => $this->instance->id));
+
             $view = new block_view($url);
 
-            $this->content->footer = "<a href='{$url}' class='btn btn-primary btn-block'>GESTIONAR CURSO</a>";
+            $this->content->footer = "<a href='{$url}' class='btn btn-danger btn-block'>GESTIONAR CURSO</a>";
+            $this->content->text = "<a href='{$second}' class='btn btn-primary btn-block'>GESTION</a>";
         }
 
         //$this->content->text = $view->render();

@@ -24,44 +24,42 @@
 
 namespace block_sic\app\domain;
 
-class response {
-    private $id;
-    private $message;
-    private $errors;
-    private $content;
-    private $error;
+use moodle_exception;
 
-    public function __construct(string $response) {
-        // if(!$response){
-        //     $error = (object) [ 'error' => [ (object) ['mensaje' => curl_error($curl)] ] ];
-        //     // $error = [ 'error' => (object) ['mensaje' => curl_error($curl)] ];
-        //     $this->query = json_encode($error);
-        // }
-        if(is_null(json_decode($response))){
-            $data = json_decode(explode("</div>", $response)[1]);
-        }else{
-            $data = json_decode($response);
-        }
-        $this->error = false;
-        $this->id = $data['id_proceso'];
-        $this->message = $data['respuesta_SIC'];
-        if(isset($data['datosError'])){
-            $this->data = $data['datosError'];
-            if(isset($data['datosEnviados'])) $this->content = $data['datosEnviados'];
-            $this->error = true;
-        }else{
-            if(isset($data['envio'])) $this->content = $data['envio'];
-            if(isset($data['errores'])) $this->errors = $data['errores'];
+abstract class response {
+    protected $urls;
+    public $content;
+    public $template;
+
+    public function __construct(){
+        $this->urls = array();
+    }
+    public function render(){
+        $this->renderUrls();
+    }
+
+    protected function renderUrls(){
+        foreach ($this->urls as $name=>$url){
+            $this->content->{$name} = str_replace('&amp;', '&', $url->__toString());
         }
     }
-
-    public function is_error()
-    {
-        return $this->error;
+    /**
+     * @throws moodle_exception
+     */
+    public function registerRoute(route $route, request $request){
+        $this->urls[$route->action.'url'] = self::url($route->action, $request->params);
+        //echo 'URL Registradas: '.count($this->urls).'<br>';
     }
 
-    public function get_errors()
-    {
-        return $this->errors;
+    /**
+     * @throws moodle_exception
+     */
+    public static function url(string $actionname, object $params): \moodle_url {
+        return new \moodle_url('/blocks/sic/dashboard.php', [
+            'courseid' => $params->courseid,
+            'instance' => $params->instance,
+            'action' => trim($actionname),
+        ]);
     }
+
 }

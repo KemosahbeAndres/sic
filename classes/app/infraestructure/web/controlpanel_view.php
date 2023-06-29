@@ -38,7 +38,6 @@ use block_sic\app\domain\teacher;
 
 class controlpanel_view extends view {
     private $view;
-
     public function __construct() {
         parent::__construct();
         $this->view = new empty_view();
