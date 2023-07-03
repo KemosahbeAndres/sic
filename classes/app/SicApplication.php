@@ -86,6 +86,7 @@ class SicApplication {
             if($route->action == $this->request->action){
                 $response = call_user_func([$route->controller, $route->callback], $this->request);
                 $this->registerRoutes($response);
+                $response->content->manager = $this->request->user->get_role() == "manager";
                 echo $response->render();
                 return;
                 break;
@@ -94,6 +95,7 @@ class SicApplication {
         /** @var response $response */
         $response = call_user_func([$this->default->controller, $this->default->callback], $this->request);
         $this->registerRoutes($response);
+        $response->content->manager = $this->request->user->get_role() == "manager";
         echo $response->render();
     }
 

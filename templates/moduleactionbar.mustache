@@ -22,15 +22,9 @@
 
     }
 }}
-{{> block_sic/header}}
 
-<div class="sicplugin vstack gap-3">
-
-    {{> block_sic/navbar }}
-
-    {{$content}}{{/content}}
-
-    <cite class="text-center lead">Complemento de conexion con SIC 1.1v - 2023, Andres Cubillos S.</cite>
-</div>
-
-{{> block_sic/footer}}
+{{#manager}}
+    <a class="btn btn-outline-primary" href="#">Modificar Modulo</a>
+    <a class="btn btn-outline-success" href="#">Agregar Seccion</a>
+    <a class="btn btn-outline-danger" href="#">Eliminar Modulo</a>
+{{/manager}}

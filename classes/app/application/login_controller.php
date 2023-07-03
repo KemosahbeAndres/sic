@@ -56,17 +56,17 @@ class login_controller {
 
         switch($rol->get_role()) {
             case rol::$manager:
-                return new manager($user->id, $user->name, $user->rut, $user->dv);
+                return new manager($user->id, $user->name, $user->rut, $user->dv, $rol->get_rolename());
             case rol::$moderator:
-                return new moderator($user->id, $user->name, $user->rut, $user->dv);
+                return new moderator($user->id, $user->name, $user->rut, $user->dv, $rol->get_rolename());
             case rol::$teacher:
-                return new teacher($user->id, $user->name, $user->rut, $user->dv);
+                return new teacher($user->id, $user->name, $user->rut, $user->dv, $rol->get_rolename());
             case rol::$student:
-                $student = new student($user->id, $user->name, $user->rut, $user->dv);
+                $student = new student($user->id, $user->name, $user->rut, $user->dv, $rol->get_rolename());
                 $student->set_state(new state($this->states->between($userid, $courseid)));
                 return $student;
             default:
-                return new visitor($user->id, $user->name, $user->rut, $user->dv);
+                return new visitor($user->id, $user->name, $user->rut, $user->dv, $rol->get_rolename());
         }
         //return new visitor($user->id, $user->name, $user->rut, $user->dv);
     }

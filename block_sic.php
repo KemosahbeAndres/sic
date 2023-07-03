@@ -85,8 +85,9 @@ class block_sic extends block_base{
         $grades = new grades_repository();
         $attendances = new attendances_repository();
 
-        $identity = new login_controller($users, $roles);
+        $context = new \block_sic\app\infraestructure\persistence\repository_context();
 
+        $identity = new login_controller($users, $roles);
 
 
         $me = $identity->execute($USER->id, $COURSE->id);
@@ -100,13 +101,7 @@ class block_sic extends block_base{
                 $attendances
             );
 
-            $courseloader = new consult_course_controller(
-                $courses,
-                $modules,
-                $sections,
-                $activities,
-                $lessons
-            );
+            $courseloader = new consult_course_controller($context);
             $course = $courseloader->execute($COURSE->id);
             $me->set_course($course);
             $userdata = $userdataloader->execute($me);

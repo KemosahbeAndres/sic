@@ -25,6 +25,7 @@
 namespace block_sic\app\domain;
 
 use block_sic\app\utils\Arrays;
+use block_sic\app\utils\Dates;
 
 class course {
     private $id;
@@ -102,5 +103,26 @@ class course {
         return array_filter($this->mdlsections, function (section $section) {
             return !$section->assigned();
         });
+   }
+
+   public function __toObject(): object{
+        $modules = array();
+       /** @var module $module */
+       foreach ($this->get_modules() as $module){
+            $modules[] = $module->__toObject();
+        }
+       $sections = array();
+       /** @var section $section */
+       foreach ($this->get_excluded_sections() as $section){
+           $sections[] = $section->__toObject();
+       }
+        return (object) [
+            'id' => $this->get_id(),
+            'code' => $this->get_code(),
+            'startdate' => Dates::format($this->get_startdate()),
+            'enddate' => Dates::format($this->get_enddate()),
+            'modules' => $modules,
+            'sections' => $sections
+        ];
    }
 }

@@ -24,6 +24,7 @@
 
 namespace block_sic\app\domain;
 use block_sic\app\utils\Arrays;
+use block_sic\app\utils\Dates;
 
 class module {
     private $id;
@@ -46,6 +47,23 @@ class module {
 
     public function equal(module $module): bool {
         return $this->id == $module->get_id();
+    }
+
+    public function __toObject(): object {
+        $sections = array();
+        /** @var section $section */
+        foreach ($this->get_sections() as $section) {
+            $sections[] = $section->__toObject();
+        }
+        return (object) [
+            'id' => $this->get_id(),
+            'code' => $this->get_code(),
+            'startdate' => Dates::format($this->get_startdate()),
+            'enddate' => Dates::format($this->get_enddate()),
+            'sync' => $this->get_sync_amount(),
+            'async' => $this->get_async_amount(),
+            'sections' => $sections
+        ];
     }
 
     public function get_id(): int {

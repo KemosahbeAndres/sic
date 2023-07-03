@@ -47,6 +47,25 @@ class section {
         return $this->id == $section->get_id();
     }
 
+    public function __toObject(): object {
+        $activities = array();
+        /** @var activity $activity */
+        foreach ($this->activities as $activity){
+            $activities[] = $activity->__toObject();
+        }
+        $lessons = array();
+        /** @var lesson $lesson */
+        foreach ($this->lessons as $lesson){
+            $lessons[] = $lesson->__toObject();
+        }
+        return (object) [
+            'id' => $this->id,
+            'name' => $this->name,
+            'assigned' => $this->assigned,
+            'activities' => $activities,
+            'lessons' => $lessons
+        ];
+    }
     public function object(): object {
         return (object) [
             'id' => $this->id,

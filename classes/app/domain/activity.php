@@ -51,6 +51,14 @@ class activity {
         return $this->id == $activity->get_id();
     }
 
+    public function __toObject(): object {
+        return (object) [
+            'id' => $this->id,
+            'code' => $this->code,
+            'mandatory' => $this->mandatory,
+            'type' => $this->type
+        ];
+    }
     public function toObject(): object {
         return (object) [
             'id' => $this->id,

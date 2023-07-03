@@ -38,8 +38,8 @@ final class student extends user {
      * @param int $rut
      * @param string $dv
      */
-    public function __construct(int $id, string $name, int $rut, string $dv) {
-        parent::__construct($id, $name, $rut, $dv);
+    public function __construct(int $id, string $name, int $rut, string $dv, string $role) {
+        parent::__construct($id, $name, $rut, $dv, $role);
         $this->state = null;
         $this->dedications = array();
         $this->completions = array();

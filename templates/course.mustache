@@ -25,8 +25,84 @@
 
 {{< block_sic/layout}}
     {{$ content}}
-        <div class="container-fluid">
-            <h1>Curso</h1>
+        <div class="card">
+            <div class="card-header hstack hstack-sm gap-3">
+                <h2>Curso</h2>
+                {{> block_sic/courseactionbar}}
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <div class="col-md-6">
+                        <dt>ID</dt>
+                        <dd>{{course.id}}</dd>
+                        <dt>Codigo</dt>
+                        <dd>{{course.code}}</dd>
+                    </div>
+                    <div class="col-md-6">
+                        <dt>Fecha inicio</dt>
+                        <dd>{{course.startdate}}</dd>
+                        <dt>Fecha fin</dt>
+                        <dd>{{course.enddate}}</dd>
+                    </div>
+                </dl>
+            </div>
         </div>
+        {{^course.modules}}
+            <div class="alert alert-warning">No hay modulos!</div>
+        {{/course.modules}}
+        {{#course.modules}}
+            <div class="card">
+                <div class="card-header hstack hstack-sm gap-3">
+                    <h2>Modulo (ID {{id}})</h2>
+                    {{> block_sic/moduleactionbar}}
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <dl class="col-md-4">
+                            <dt>Codigo</dt>
+                            <dd>{{code}}</dd>
+
+                            <dt>Fecha inicio</dt>
+                            <dd>{{startdate}}</dd>
+
+                            <dt>Fecha fin</dt>
+                            <dd>{{enddate}}</dd>
+
+                            <dt>Actividades Sincronas</dt>
+                            <dd>{{sync}}</dd>
+
+                            <dt>Actividades Asincronas</dt>
+                            <dd>{{async}}</dd>
+                        </dl>
+                        <div class="col-md-8">
+                            <h3>Secciones</h3>
+                            <div class="scroll-2">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                        <tbody>
+                                            {{#sections}}
+                                                <tr>
+                                                    <td>{{name}}</td>
+                                                    <td>
+                                                        {{>block_sic/sectionactionbar}}
+                                                    </td>
+                                                </tr>
+                                            {{/sections}}
+                                        </tbody>
+                                </table>
+                            {{^sections}}
+                                <div class="alert alert-warning">No hay secciones!</div>
+                            {{/sections}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {{/course.modules}}
     {{/ content}}
 {{/ block_sic/layout}}

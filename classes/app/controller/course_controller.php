@@ -24,21 +24,31 @@
 
 namespace block_sic\app\controller;
 
+use block_sic\app\application\consult_course_controller;
 use block_sic\app\domain\request;
 use block_sic\app\domain\response;
 use block_sic\app\infraestructure\persistence\repository_context;
 
 class course_controller extends controller {
+    private $courseLoader;
     public function __construct(repository_context $context) {
         parent::__construct($context);
+        $this->courseLoader = new consult_course_controller($this->context);
     }
 
     public function index(request $request): response {
+        $course = $this->courseLoader->execute($request->params->courseid);
+        $this->content->course = $course->__toObject();
+        //var_dump($this->content);
         return $this->response('course');
     }
 
     public function participants(request $request): response {
         return $this->response('participants');
+    }
+
+    public function sicpanel(request $request): response {
+        return $this->response('sicpanel');
     }
 
 }

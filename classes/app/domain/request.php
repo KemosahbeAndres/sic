@@ -31,6 +31,9 @@ class request {
     public $action;
     public $cookies;
     public $params;
+    /**
+     * @var user
+     */
     public $user;
     public function __construct(){
         $this->action = "";

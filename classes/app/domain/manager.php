@@ -25,8 +25,8 @@
 namespace block_sic\app\domain;
 
 class manager extends user {
-    public function __construct(int $id, string $name, int $rut, string $dv) {
-        parent::__construct($id, $name, $rut, $dv);
+    public function __construct(int $id, string $name, int $rut, string $dv, string $role) {
+        parent::__construct($id, $name, $rut, $dv, $role);
     }
 
 

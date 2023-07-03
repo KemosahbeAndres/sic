@@ -7,8 +7,17 @@ ul, ol {
     background-color: rgb(242 242 242);
     overflow-x: visible;
 }
-
 /*Rules from Bootstrap*/
+
+@media (max-width: 767.98px) {
+    *.vstack-sm {
+        flex-direction: row !important;
+    }
+
+    *.hstack-sm {
+        flex-direction: column !important;
+    }
+}
 
 .vstack {
     display: flex;
@@ -22,6 +31,16 @@ ul, ol {
     flex-direction: row;
     align-items: center;
     align-self: stretch;
+}
+
+.sicplugin > .nav .nav-item {
+    border: 1px solid rgba(0,0,0,.125);
+}
+
+.sicplugin .btn:focus,
+.sicplugin .btn:focus-visible {
+    box-shadow: none;
+    outline: 0;
 }
 
 .gap-1 {
@@ -38,6 +57,35 @@ ul, ol {
 }
 .gap-5 {
     3rem!important;
+}
+
+.row {
+    margin: 0;
+}
+
+.scroll-1 {
+    overflow-y: scroll;
+    height: 15vh;
+}
+.scroll-2 {
+    overflow-y: scroll;
+    height: 25vh;
+}
+.scroll-3 {
+    overflow-y: scroll;
+    height: 35vh;
+}
+.scroll-4 {
+    overflow-y: scroll;
+    height: 45vh;
+}
+.scroll-5 {
+    overflow-y: scroll;
+    height: 55vh;
+}
+
+dd {
+    margin-left: 1em;
 }
 
 .input-group-text {

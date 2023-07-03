@@ -53,6 +53,8 @@ $app->default('course', course_controller::class, 'index');
 
 $app->get('participants', course_controller::class, 'participants');
 
+$app->get('sic', course_controller::class, 'sicpanel');
+
 $app->run();
 
 echo $OUTPUT->footer();

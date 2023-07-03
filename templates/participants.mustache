@@ -26,8 +26,41 @@
 
 {{< block_sic/layout}}
     {{$ content}}
-        <div class="container-fluid">
-            <h1>Participantes</h1>
+        <div class="grid gap-3">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Gestor</h2>
+                </div>
+                <div class="card-body">
+                    <p>Contenido</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>Moderadores</h2>
+                </div>
+                <div class="card-body">
+                    <p>Contenido</p>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h2>Profesores</h2>
+            </div>
+            <div class="card-body">
+                <p>Contenido</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header hstack hstack-sm gap-3">
+                <h2>Estudiantes</h2>
+                {{> block_sic/studentsactionbar}}
+            </div>
+            <div class="card-body">
+                <p>Contenido</p>
+            </div>
         </div>
     {{/ content}}
 {{/ block_sic/layout}}

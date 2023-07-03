@@ -32,28 +32,19 @@ use block_sic\app\application\contracts\isections_repository;
 use block_sic\app\domain\course;
 use block_sic\app\domain\module;
 use block_sic\app\domain\section;
+use block_sic\app\infraestructure\persistence\repository_context;
 
 class consult_course_controller {
-    private $courses;
-    private $modules;
-    private $sections;
+    private $context;
     private $sectionloader;
 
-    public function __construct(
-        icourses_repository $courses,
-        imodules_repository $modules,
-        isections_repository $sections,
-        iactivities_repository $activities,
-        ilessons_repository $lessons
-        ) {
-        $this->courses = $courses;
-        $this->modules = $modules;
-        $this->sections = $sections;
-        $this->sectionloader = new list_sections_controller($activities, $lessons);
+    public function __construct(repository_context $context) {
+        $this->context = $context;
+        $this->sectionloader = new list_sections_controller($this->context->activities, $this->context->lessons);
     }
 
     public function execute(int $courseid): course {
-        $course = $this->courses->by_id($courseid);
+        $course = $this->context->courses->by_id($courseid);
         $output = new course(
             $course->id,
             $course->code,
@@ -64,12 +55,12 @@ class consult_course_controller {
 
         //echo "OUTSIDE MODEL ## {$output->get_id()} ## {$output->get_code()} ## {$output->get_startdate()} ## {$output->get_enddate()} ## <br>";
 
-        $modulelist = $this->modules->related_to($courseid);
+        $modulelist = $this->context->modules->related_to($courseid);
 
         //echo "<br> module count: " . count($modulelist);
 
         $secciones = $this->sectionloader->execute(
-            $this->sections->from($courseid)
+            $this->context->sections->from($courseid)
         );
         foreach ($secciones as $seccion) {
             $output->add_mdl_section($seccion);
@@ -85,7 +76,7 @@ class consult_course_controller {
                     $module->async
                 );
                 $secciones = $this->sectionloader->execute(
-                    $this->sections->related_to($modulo->get_id())
+                    $this->context->sections->related_to($modulo->get_id())
                 );
                 //echo "<br>FOUND in module:" . count($secciones);
                 /** @var section $seccion */

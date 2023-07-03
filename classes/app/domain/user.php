@@ -29,6 +29,7 @@ abstract class user {
     protected $name;
     protected $rut;
     protected $dv;
+    protected $role;
     protected $course;
 
     /**
@@ -36,12 +37,14 @@ abstract class user {
      * @param string $name
      * @param int $rut
      * @param string $dv
+     * @param string $role
      */
-    public function __construct(int $id, string $name, int $rut, string $dv) {
+    public function __construct(int $id, string $name, int $rut, string $dv, string $role) {
         $this->id = $id;
         $this->name = $name;
         $this->rut = $rut;
         $this->dv = $dv;
+        $this->role = $role;
         $this->course = null;
     }
 
@@ -86,6 +89,10 @@ abstract class user {
      */
     public function get_full_rut(): string {
         return strval("{$this->rut}-{$this->dv}");
+    }
+
+    public function get_role(): string {
+        return trim(strval($this->role));
     }
 
     /**

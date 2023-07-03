@@ -47,6 +47,16 @@ class lesson {
         $this->duration = $duration;
     }
 
+    public function __toObject(): object {
+        return (object) [
+            'id' => $this->get_id(),
+            'name' => $this->get_name(),
+            'date' => $this->get_date(),
+            'duration' => $this->get_duration(),
+            'activity' => $this->get_activity()->__toObject()
+        ];
+    }
+
     public function toObject(): object {
         return (object) [
             'id' => $this->get_id(),
