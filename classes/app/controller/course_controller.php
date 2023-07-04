@@ -25,30 +25,41 @@
 namespace block_sic\app\controller;
 
 use block_sic\app\application\consult_course_controller;
+use block_sic\app\application\participants_finder;
 use block_sic\app\domain\request;
 use block_sic\app\domain\response;
 use block_sic\app\infraestructure\persistence\repository_context;
 
 class course_controller extends controller {
+    /**
+     * @var consult_course_controller
+     */
     private $courseLoader;
+    /**
+     * @var participants_finder
+     */
+    private $participantsFinder;
     public function __construct(repository_context $context) {
         parent::__construct($context);
         $this->courseLoader = new consult_course_controller($this->context);
+        $this->participantsFinder = new participants_finder($context);
     }
 
     public function index(request $request): response {
         $course = $this->courseLoader->execute($request->params->courseid);
         $this->content->course = $course->__toObject();
         //var_dump($this->content);
-        return $this->response('course');
+        return $this->response('course/course');
     }
 
     public function participants(request $request): response {
-        return $this->response('participants');
+        $course = $this->courseLoader->execute($request->params->courseid);
+        $this->content->participants = $this->participantsFinder->execute($course);
+        return $this->response('participants/participants');
     }
 
     public function sicpanel(request $request): response {
-        return $this->response('sicpanel');
+        return $this->response('sic/sicpanel');
     }
 
 }

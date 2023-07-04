@@ -66,7 +66,7 @@ class login_controller {
                 $student->set_state(new state($this->states->between($userid, $courseid)));
                 return $student;
             default:
-                return new visitor($user->id, $user->name, $user->rut, $user->dv, $rol->get_rolename());
+                return new visitor($user->id, $user->name, $user->rut, $user->dv, "guest");
         }
         //return new visitor($user->id, $user->name, $user->rut, $user->dv);
     }

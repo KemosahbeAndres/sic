@@ -38,8 +38,12 @@ final class repository_context {
 
     public $students;
     public $teachers;
+    /**
+     * @var callable
+     */
     public $moderators;
     public $managers;
+    public $states;
 
     public function __construct(){
         $this->courses = new courses_repository();
@@ -55,7 +59,12 @@ final class repository_context {
 
         $users = new users_repository();
         $states = new states_repository();
-        $this->students = new students_repository($users, $states);
-        $this->teachers = new teachers_repository($users);
+        $this->states = $states;
+        $roles = new roles_repository();
+
+        $this->students = new students_repository($users, $states, $roles);
+        $this->teachers = new teachers_repository($users, $roles);
+        $this->managers = new managers_repository($users, $roles);
+        $this->moderators = new moderators_repository($users, $roles);
     }
 }

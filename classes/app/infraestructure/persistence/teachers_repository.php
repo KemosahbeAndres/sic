@@ -24,25 +24,29 @@
 
 namespace block_sic\app\infraestructure\persistence;
 
+use block_sic\app\application\contracts\iroles_repository;
 use block_sic\app\application\contracts\iusers_repository;
 use block_sic\app\domain\teacher;
 
 class teachers_repository {
 
     public $users;
+    public $roles;
 
     /**
      * @param iusers_repository $users
      */
-    public function __construct(iusers_repository $users) {
+    public function __construct(iusers_repository $users, iroles_repository $roles) {
         $this->users = $users;
+        $this->roles = $roles;
     }
 
-    public function related_to(int $courseid): array {
+    public function execute(int $courseid): array {
         $users = $this->users->teachers_of($courseid);
         $teachers = array();
         foreach ($users as $user){
-            $teachers[] = new teacher($user->id, $user->name, $user->rut, $user->dv);
+            $role = $this->roles->between($user->id, $courseid);
+            $teachers[] = new teacher($user->id, $user->name, $user->rut, $user->dv, $role->get_rolename());
         }
         return $teachers;
     }

@@ -24,12 +24,6 @@
 
 namespace block_sic\app\infraestructure\web;
 
-use block_sic\app\application\create_module_controller;
-use block_sic\app\application\list_manager_controller;
-use block_sic\app\application\login_controller;
-use block_sic\app\application\consult_course_controller;
-use block_sic\app\application\list_students_controller;
-use block_sic\app\application\load_course_data_controller;
 use block_sic\app\domain\manager;
 use block_sic\app\domain\moderator;
 use block_sic\app\domain\session;

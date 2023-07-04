@@ -72,6 +72,10 @@ class block_sic extends block_base{
         }
         $this->content = new stdClass();
 
+        $second = new moodle_url('/blocks/sic/dashboard.php', array('courseid' => $COURSE->id, 'instance' => $this->instance->id));
+        $this->content->text = "<a href='{$second}' class='btn btn-primary btn-block'>GESTION</a>";
+        return $this->content;
+
         $users = new users_repository();
         $states = new states_repository();
         $roles = new roles_repository();

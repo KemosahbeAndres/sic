@@ -22,34 +22,23 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_sic\app\application;
+namespace block_sic\app\infraestructure\persistence;
 
+use block_sic\app\application\contracts\iroles_repository;
 use block_sic\app\application\contracts\iusers_repository;
-use block_sic\app\domain\course;
 use block_sic\app\domain\manager;
 
-class list_manager_controller {
-
+class managers_repository {
     private $users;
-
-    /**
-     * @param iusers_repository $users
-     */
-    public function __construct(iusers_repository $users) {
+    private $roles;
+    public function __construct(iusers_repository $users, iroles_repository $roles){
         $this->users = $users;
+        $this->roles = $roles;
     }
 
-    public function execute(course $course): manager {
-        $user = $this->users->manager_of($course->get_id());
-        $manager = new manager(
-            $user->id,
-            $user->name,
-            $user->rut,
-            $user->dv
-        );
-        $manager->set_course($course);
-        return $manager;
+    public function execute(int $courseid): manager {
+        $user = $this->users->manager_of($courseid);
+        $role = $this->roles->between($user->id, $courseid);
+        return new manager($user->id, $user->name, $user->rut, $user->dv, $role->get_rolename());
     }
-
-
 }

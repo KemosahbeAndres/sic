@@ -26,6 +26,10 @@ namespace block_sic\app\application;
 
 use block_sic\app\application\contracts\istates_repository;
 use block_sic\app\application\contracts\iusers_repository;
+use block_sic\app\application\old\list_manager_controller;
+use block_sic\app\application\old\list_moderators_controller;
+use block_sic\app\application\old\list_students_controller;
+use block_sic\app\application\old\list_teachers_controller;
 use block_sic\app\domain\course;
 use block_sic\app\domain\manager;
 

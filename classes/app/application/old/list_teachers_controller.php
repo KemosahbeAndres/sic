@@ -22,28 +22,33 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_sic\app\controller;
+namespace block_sic\app\application\old;
 
-use block_sic\app\domain\view_response;
-use block_sic\app\infraestructure\persistence\repository_context;
+use block_sic\app\application\contracts\iusers_repository;
+use block_sic\app\domain\course;
+use block_sic\app\domain\teacher;
 
-class controller {
-    protected $context;
-    protected $content;
+class list_teachers_controller {
+    private $users;
 
-    protected function __construct(repository_context $context){
-        $this->context = $context;
-        $this->content = new \stdClass();
+    public function __construct(iusers_repository $users) {
+        $this->users = $users;
     }
 
-    protected function response(string $viewname): view_response {
-        $path = preg_split('/(\/)/', $viewname);
-        $name = $viewname;
-        if(is_array($path)){
-            $name = strval($path[array_key_last($path)]);
+    public function execute(course $course): array {
+        $teachers = $this->users->teachers_of($course->get_id());
+        $output = array();
+        foreach ($teachers as $user) {
+            $teacher = new teacher(
+                $user->id,
+                $user->name,
+                $user->rut,
+                $user->dv
+            );
+            $teacher->set_course($course);
+            $output[] = $teacher;
         }
-        $this->content->{trim($name)."page"} = true;
-        return new view_response(trim($viewname), $this->content);
+        return $output;
     }
 
 }

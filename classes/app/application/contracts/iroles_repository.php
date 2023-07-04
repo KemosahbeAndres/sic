@@ -24,9 +24,11 @@
 
 namespace block_sic\app\application\contracts;
 
+use block_sic\app\domain\rol;
+
 interface iroles_repository {
-    public function by_id (int $id): ?object;
+    public function by_id (int $id): ?rol;
     public function all (): array;
-    public function between (int $userid, int $courseid): ?object;
+    public function between (int $userid, int $courseid): ?rol;
 
 }

@@ -24,11 +24,6 @@
 
 namespace block_sic\app\application;
 
-use block_sic\app\application\contracts\iactivities_repository;
-use block_sic\app\application\contracts\icourses_repository;
-use block_sic\app\application\contracts\ilessons_repository;
-use block_sic\app\application\contracts\imodules_repository;
-use block_sic\app\application\contracts\isections_repository;
 use block_sic\app\domain\course;
 use block_sic\app\domain\module;
 use block_sic\app\domain\section;

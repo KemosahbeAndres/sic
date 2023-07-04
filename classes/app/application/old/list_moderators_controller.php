@@ -22,28 +22,39 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_sic\app\controller;
+namespace block_sic\app\application\old;
 
-use block_sic\app\domain\view_response;
-use block_sic\app\infraestructure\persistence\repository_context;
+use block_sic\app\application\contracts\iusers_repository;
+use block_sic\app\domain\course;
+use block_sic\app\domain\moderator;
 
-class controller {
-    protected $context;
-    protected $content;
+class list_moderators_controller {
 
-    protected function __construct(repository_context $context){
-        $this->context = $context;
-        $this->content = new \stdClass();
+    private $users;
+
+    /**
+     * @param $users
+     */
+    public function __construct(iusers_repository $users) {
+        $this->users = $users;
     }
 
-    protected function response(string $viewname): view_response {
-        $path = preg_split('/(\/)/', $viewname);
-        $name = $viewname;
-        if(is_array($path)){
-            $name = strval($path[array_key_last($path)]);
+    /**
+     * @param course $course
+     * @return array
+     */
+    public function execute(course $course): array {
+        $out = array();
+        foreach ($this->users->moderators_of($course->get_id()) as $user) {
+            $moderator = new moderator(
+                $user->id,
+                $user->name,
+                $user->rut,
+                $user->dv
+            );
+            $out[] = $moderator;
         }
-        $this->content->{trim($name)."page"} = true;
-        return new view_response(trim($viewname), $this->content);
+        return $out;
     }
 
 }

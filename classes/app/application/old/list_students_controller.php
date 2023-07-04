@@ -22,30 +22,27 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_sic\app\application;
+namespace block_sic\app\application\old;
 
-use block_sic\app\application\contracts\istates_repository;
-use block_sic\app\application\contracts\iusers_repository;
 use block_sic\app\domain\course;
 use block_sic\app\domain\state;
 use block_sic\app\domain\student;
+use block_sic\app\infraestructure\persistence\repository_context;
 use block_sic\app\utils\Arrays;
 
 class list_students_controller {
-    private $usersrepo;
-    private $states;
+    private $context;
 
-    public function __construct(iusers_repository $usersrepo, istates_repository $states) {
-        $this->usersrepo = $usersrepo;
-        $this->states = $states;
+    public function __construct(repository_context $context) {
+        $this->context = $context;
     }
 
-    public function execute(course $course): array {
+    public function __invoke(course $course): array {
         $students = Arrays::void();;
-        $users = $this->usersrepo->students_of($course->get_id());
+        $users = $this->context->students->related_to($course->get_id());
         foreach ($users as $user) {
             $state = new state(
-                $this->states->between($user->id, $course->get_id())
+                $this->context->states->between($user->id, $course->get_id())
             );
             $student = new student(
                 $user->id,

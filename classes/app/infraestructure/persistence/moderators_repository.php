@@ -22,39 +22,28 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_sic\app\application;
+namespace block_sic\app\infraestructure\persistence;
 
+use block_sic\app\application\contracts\iroles_repository;
 use block_sic\app\application\contracts\iusers_repository;
-use block_sic\app\domain\course;
 use block_sic\app\domain\moderator;
 
-class list_moderators_controller {
-
+class moderators_repository {
     private $users;
-
-    /**
-     * @param $users
-     */
-    public function __construct(iusers_repository $users) {
+    private $roles;
+    public function __construct(iusers_repository $users, iroles_repository $roles){
         $this->users = $users;
+        $this->roles = $roles;
     }
 
-    /**
-     * @param course $course
-     * @return array
-     */
-    public function execute(course $course): array {
-        $out = array();
-        foreach ($this->users->moderators_of($course->get_id()) as $user) {
-            $moderator = new moderator(
-                $user->id,
-                $user->name,
-                $user->rut,
-                $user->dv
-            );
-            $out[] = $moderator;
+    public function execute(int $courseid): array {
+        $users = $this->users->moderators_of($courseid);
+        $moderators = array();
+        foreach($users as $user) {
+            $role = $this->roles->between($user->id, $courseid);
+            $moderators[] = new moderator($user->id, $user->name, $user->rut, $user->dv, $role->get_rolename());
         }
-        return $out;
+        return $moderators;
     }
 
 }

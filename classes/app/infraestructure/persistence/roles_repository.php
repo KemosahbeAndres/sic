@@ -25,16 +25,37 @@
 namespace block_sic\app\infraestructure\persistence;
 
 use block_sic\app\application\contracts\iroles_repository;
+use block_sic\app\domain\rol;
 
 class roles_repository implements iroles_repository {
-    public function by_id (int $id): ?object {
-        return null;
+    /**
+     * @throws \dml_exception
+     */
+    public function by_id (int $id): ?rol {
+        global $DB;
+        $record = $DB->get_record('role', ['id' => $id], '*', IGNORE_MISSING);
+        if(!$record){
+            return null;
+        }
+        $output = new \stdClass();
+        $output->role = intval($record->id);
+        $output->name = strval($record->shortname);
+        return new rol($output);
     }
+
+    /**
+     * @throws \dml_exception
+     */
     public function all (): array {
+        global $DB;
+        $records = $DB->get_records('role');
         $output = array();
+        foreach ($records as $record){
+            $output[] = $this->by_id($record->id);
+        }
         return $output;
     }
-    public function between(int $userid, int $courseid): ?object {
+    public function between(int $userid, int $courseid): ?rol {
         global $DB;
         $sql = "SELECT a.roleid, r.shortname as rolename FROM {role_assignments} a LEFT JOIN {context} c
         ON c.id = a.contextid LEFT JOIN {role} r ON r.id = a.roleid WHERE (a.roleid = 5 OR a.roleid = 4 OR a.roleid = 3 OR a.roleid = 1)
@@ -43,6 +64,6 @@ class roles_repository implements iroles_repository {
         $output = new \stdClass();
         $output->role = intval($record->roleid);
         $output->name = strval($record->rolename);
-        return $output;
+        return new rol($output);
     }
 }

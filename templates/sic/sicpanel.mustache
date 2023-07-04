@@ -26,40 +26,21 @@
 
 {{< block_sic/layout}}
     {{$ content}}
-        <div class="grid gap-3">
-            <div class="card">
-                <div class="card-header">
-                    <h2>Gestor</h2>
-                </div>
-                <div class="card-body">
-                    <p>Contenido</p>
-                </div>
+        <div class="card">
+            <div class="card-header hstack hstack-sm gap-3">
+                <h2>Registros Curso</h2>
+                {{> block_sic/sic/sicactionbar}}
             </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h2>Moderadores</h2>
-                </div>
-                <div class="card-body">
-                    <p>Contenido</p>
-                </div>
+            <div class="card-body">
+                <p>Contenido</p>
             </div>
         </div>
         <div class="card">
             <div class="card-header">
-                <h2>Profesores</h2>
+                <h2>Historial de Registros</h2>
             </div>
             <div class="card-body">
-                <p>Contenido</p>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-header hstack hstack-sm gap-3">
-                <h2>Estudiantes</h2>
-                {{> block_sic/studentsactionbar}}
-            </div>
-            <div class="card-body">
-                <p>Contenido</p>
+                <p class="alert alert-info">Proximamente!</p>
             </div>
         </div>
     {{/ content}}

@@ -63,7 +63,7 @@ final class rol {
     }
 
     public function equal(int $role): bool {
-        return $role == $this->role ? true : false;
+        return $role == $this->role;
     }
 
 }

@@ -24,6 +24,7 @@
 
 namespace block_sic\app\infraestructure\persistence;
 
+use block_sic\app\application\contracts\iroles_repository;
 use block_sic\app\application\contracts\istates_repository;
 use block_sic\app\application\contracts\iusers_repository;
 use block_sic\app\domain\state;
@@ -32,16 +33,18 @@ use block_sic\app\domain\student;
 class students_repository {
     private $states;
     private $users;
-    public function __construct(iusers_repository $users, istates_repository $states) {
+    private $roles;
+    public function __construct(iusers_repository $users, istates_repository $states, iroles_repository $roles) {
         $this->users = $users;
         $this->states = $states;
+        $this->roles = $roles;
     }
-    public function related_to(int $courseid): array {
+    public function execute(int $courseid): array {
         $students = array();
         $users = $this->users->students_of($courseid);
         foreach ($users as $u){
-            //$role = $this->roles->between($u->id, $courseid);
-            $student = new student($u->id, $u->name, $u->rut, $u->dv);
+            $role = $this->roles->between($u->id, $courseid);
+            $student = new student($u->id, $u->name, $u->rut, $u->dv, $role->get_rolename());
             $st = $this->states->between($student->get_id(), $courseid);
             $student->set_state(new state($st));
             $students[] = $student;

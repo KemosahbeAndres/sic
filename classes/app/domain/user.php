@@ -48,6 +48,15 @@ abstract class user {
         $this->course = null;
     }
 
+    public function __toObject(): object {
+        return (object) [
+            'id' => $this->get_id(),
+            'name' => $this->get_name(),
+            'rut' => $this->get_full_rut(),
+            'role' => $this->get_role()
+        ];
+    }
+
     /**
      * @param course $course
      */

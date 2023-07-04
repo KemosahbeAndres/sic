@@ -33,7 +33,7 @@ class users_repository implements iusers_repository {
         global $DB;
         $record = $DB->get_record('user', ['id' => $id], '*', MUST_EXISTS);
         $name = strval($record->firstname . " " . $record->lastname);
-        $splitted = preg_split("/-/", $record->username);
+        $splitted = preg_split("/-/", $record->idnumber);
         $rut = intval($splitted[0]);
         $dv = strval($splitted[1]);
         $output = new \stdClass();

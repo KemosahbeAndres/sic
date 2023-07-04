@@ -22,34 +22,34 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_sic\app\application;
+namespace block_sic\app\application\old;
 
 use block_sic\app\application\contracts\iusers_repository;
 use block_sic\app\domain\course;
-use block_sic\app\domain\teacher;
-use block_sic\app\infraestructure\persistence\users_repository;
+use block_sic\app\domain\manager;
 
-class list_teachers_controller {
+class list_manager_controller {
+
     private $users;
 
+    /**
+     * @param iusers_repository $users
+     */
     public function __construct(iusers_repository $users) {
         $this->users = $users;
     }
 
-    public function execute(course $course): array {
-        $teachers = $this->users->teachers_of($course->get_id());
-        $output = array();
-        foreach ($teachers as $user) {
-            $teacher = new teacher(
-                $user->id,
-                $user->name,
-                $user->rut,
-                $user->dv
-            );
-            $teacher->set_course($course);
-            $output[] = $teacher;
-        }
-        return $output;
+    public function execute(course $course): manager {
+        $user = $this->users->manager_of($course->get_id());
+        $manager = new manager(
+            $user->id,
+            $user->name,
+            $user->rut,
+            $user->dv
+        );
+        $manager->set_course($course);
+        return $manager;
     }
+
 
 }

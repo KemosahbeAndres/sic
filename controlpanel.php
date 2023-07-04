@@ -24,29 +24,26 @@
 
 require_once(__DIR__ . '/../../config.php');
 
-use block_sic\app\application\create_module_controller;
-use block_sic\app\application\edit_module_controller;
-use block_sic\app\application\login_controller;
 use block_sic\app\application\consult_course_controller;
+use block_sic\app\application\create_module_controller;
 use block_sic\app\application\delete_module_controller;
-use block_sic\app\application\list_students_controller;
+use block_sic\app\application\edit_module_controller;
 use block_sic\app\application\load_course_data_controller;
+use block_sic\app\application\login_controller;
 use block_sic\app\infraestructure\persistence\activities_repository;
 use block_sic\app\infraestructure\persistence\attendances_repository;
+use block_sic\app\infraestructure\persistence\completion_repository;
 use block_sic\app\infraestructure\persistence\courses_repository;
 use block_sic\app\infraestructure\persistence\dedications_repository;
 use block_sic\app\infraestructure\persistence\grades_repository;
 use block_sic\app\infraestructure\persistence\lessons_repository;
 use block_sic\app\infraestructure\persistence\modules_repository;
-use block_sic\app\infraestructure\persistence\completion_repository;
 use block_sic\app\infraestructure\persistence\roles_repository;
 use block_sic\app\infraestructure\persistence\sections_repository;
 use block_sic\app\infraestructure\persistence\states_repository;
 use block_sic\app\infraestructure\persistence\users_repository;
-use block_sic\app\infraestructure\web\empty_view;
-use block_sic\app\infraestructure\web\manager_panel_view;
-use block_sic\app\utils\Router;
 use block_sic\app\infraestructure\web\controlpanel_view;
+use block_sic\app\infraestructure\web\manager_panel_view;
 
 global $PAGE, $OUTPUT, $COURSE, $USER;
 

@@ -28,7 +28,7 @@
         <div class="card">
             <div class="card-header hstack hstack-sm gap-3">
                 <h2>Curso</h2>
-                {{> block_sic/courseactionbar}}
+                {{> block_sic/course/courseactionbar}}
             </div>
             <div class="card-body">
                 <dl class="row">
@@ -54,7 +54,7 @@
             <div class="card">
                 <div class="card-header hstack hstack-sm gap-3">
                     <h2>Modulo (ID {{id}})</h2>
-                    {{> block_sic/moduleactionbar}}
+                    {{> block_sic/course/moduleactionbar}}
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -89,7 +89,7 @@
                                                 <tr>
                                                     <td>{{name}}</td>
                                                     <td>
-                                                        {{>block_sic/sectionactionbar}}
+                                                        {{>block_sic/course/sectionactionbar}}
                                                     </td>
                                                 </tr>
                                             {{/sections}}
