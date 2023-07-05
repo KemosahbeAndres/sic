@@ -149,7 +149,7 @@ class manager_view extends view {
                 foreach ($section->get_lessons() as $lesson) {
                     $leccion = new stdClass();
                     $leccion->id = $lesson->get_id();
-                    $leccion->name = $lesson->get_name();
+                    $leccion->name = $lesson->get_code();
                     $leccion->activity = $lesson->get_activity()->get_id();
                     $leccion->date = Dates::format($lesson->get_date());
                     $leccion->duration = $lesson->get_duration();
@@ -191,7 +191,7 @@ class manager_view extends view {
             foreach ($section->get_lessons() as $lesson) {
                 $leccion = new stdClass();
                 $leccion->id = $lesson->get_id();
-                $leccion->name = $lesson->get_name();
+                $leccion->name = $lesson->get_code();
                 $leccion->activity = $lesson->get_activity()->get_id();
                 $leccion->date = Dates::format($lesson->get_date());
                 $leccion->duration = $lesson->get_duration();

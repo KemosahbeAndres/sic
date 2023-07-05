@@ -50,7 +50,7 @@ class login_controller {
 
     public function execute(int $userid, int $courseid): user {
 
-        $rol = new rol($this->loadrole->between($userid, $courseid));
+        $rol = $this->loadrole->between($userid, $courseid);
 
         $user = $this->allusers->by_id($userid);
 

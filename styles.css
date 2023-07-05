@@ -10,12 +10,34 @@ ul, ol {
 /*Rules from Bootstrap*/
 
 @media (max-width: 767.98px) {
+    td .grid {
+        grid-auto-flow: row !important;
+    }
     *.vstack-sm {
         flex-direction: row !important;
     }
 
     *.hstack-sm {
         flex-direction: column !important;
+    }
+    .sicplugin .nav-tabs .nav-link.active:not(:disabled):not(.disabled):active,
+    .sicplugin .nav-tabs .nav-link.active:not(:disabled):not(.disabled).active,
+    .sicplugin .show>.nav-tabs .nav-link.active.dropdown-toggle,
+    .sicplugin .nav-pills .nav-link.active:not(:disabled):not(.disabled):active,
+    .sicplugin .nav-pills .nav-link.active:not(:disabled):not(.disabled).active,
+    .sicplugin .show>.nav-pills .nav-link.active.dropdown-toggle {
+        color: #fff;
+        background-color: #0f6cbf;
+        border-color: #0f6cbf;
+    }
+    .sicplugin .nav-tabs .nav-link, .nav-pills .nav-link {
+        margin: 0;
+    }
+    .sicplugin .nav-tabs, .nav-pills {
+        margin: 0;
+        border: 0;
+        padding: 0;
+        background-color: rgb(242 242 242);
     }
 }
 
@@ -113,6 +135,23 @@ dd {
     grid-gap: 10px;
 }
 
+@media (max-width: 991.98px){
+    .grid {
+        grid-auto-flow: row;
+    }
+    td .grid {
+        grid-auto-flow: column;
+    }
+    .scroll-1,
+    .scroll-2,
+    .scroll-3,
+    .scroll-4,
+    .scroll-5 {
+        overflow-y: visible;
+        height: auto;
+    }
+}
+
 .btn-hover {
     background-color: transparent;
 }
@@ -125,6 +164,23 @@ dd {
     background-color: transparent;
     width: 16px;
     height: 16px;
+}
+
+@media (max-width: 575.98px){
+    td div.grid,
+    .btn {
+        width: 100%;
+    }
+
+
+}
+
+.page-context-header > * {
+    width: 100%;
+}
+.page-context-header h1 {
+    text-align: center;
+    margin: 0;font-weight: bold;
 }
 
 .btn {

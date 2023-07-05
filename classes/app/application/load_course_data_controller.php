@@ -36,8 +36,10 @@ use block_sic\app\domain\activity_completion;
 use block_sic\app\domain\section;
 use block_sic\app\domain\student;
 use block_sic\app\domain\user;
+use block_sic\app\infraestructure\persistence\repository_context;
 
 class load_course_data_controller {
+    private $context;
     private $sectiondataloader;
 
     /**
@@ -47,13 +49,14 @@ class load_course_data_controller {
      * @param iattendance_repository $attendances
      */
 
-    public function __construct(
-        idedication_repository $dedications,
-        icompletion_repository $progress,
-        igrades_repository     $grades,
-        iattendance_repository $attendances
-    ) {
-        $this->sectiondataloader = new load_section_data_controller($dedications, $progress, $grades, $attendances);
+    public function __construct(repository_context $context) {
+        $this->context = $context;
+        $this->sectiondataloader = new load_section_data_controller(
+            $context->dedications,
+            $context->completions,
+            $context->grades,
+            $context->attendances
+        );
     }
 
     public function execute(student $user): student {

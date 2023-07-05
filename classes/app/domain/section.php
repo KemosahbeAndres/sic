@@ -63,7 +63,9 @@ class section {
             'name' => $this->name,
             'assigned' => $this->assigned,
             'activities' => $activities,
-            'lessons' => $lessons
+            'nactivities' => count($activities),
+            'lessons' => $lessons,
+            'nlessons' => count($lessons)
         ];
     }
     public function object(): object {

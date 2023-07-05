@@ -25,6 +25,7 @@
 namespace block_sic\app\domain;
 
 use block_sic\app\utils\Arrays;
+use block_sic\app\utils\Dates;
 
 class lesson {
     private $id;
@@ -50,8 +51,8 @@ class lesson {
     public function __toObject(): object {
         return (object) [
             'id' => $this->get_id(),
-            'name' => $this->get_name(),
-            'date' => $this->get_date(),
+            'code' => $this->get_code(),
+            'date' => Dates::format($this->get_date()),
             'duration' => $this->get_duration(),
             'activity' => $this->get_activity()->__toObject()
         ];
@@ -60,7 +61,7 @@ class lesson {
     public function toObject(): object {
         return (object) [
             'id' => $this->get_id(),
-            'name' => $this->get_name(),
+            'code' => $this->get_code(),
             'date' => $this->get_date(),
             'duration' => $this->get_duration(),
             'activity' => $this->get_activity()->toObject()
@@ -75,7 +76,7 @@ class lesson {
         return $this->id;
     }
 
-    public function get_name(): string {
+    public function get_code(): string {
         return $this->activity->get_code();
     }
 

@@ -36,8 +36,10 @@ class participants_finder {
      * @var repository_context $context
      */
     private $context;
+    private $dataloader;
     public function __construct(repository_context $context) {
         $this->context = $context;
+        $this->dataloader = new load_course_data_controller($context);
     }
 
     public function execute(course $course): object {
@@ -67,6 +69,7 @@ class participants_finder {
         /** @var student $student */
         foreach($this->context->students->execute($course->get_id()) as $student){
             $student->set_course($course);
+            $this->dataloader->execute($student);
             $participants->students[] = $student->__toObject();
         }
         return $participants;

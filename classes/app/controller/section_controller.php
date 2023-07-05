@@ -22,33 +22,29 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_sic\app\application;
+namespace block_sic\app\controller;
 
-use block_sic\app\application\contracts\iactivities_repository;
-use block_sic\app\application\contracts\ilessons_repository;
-use block_sic\app\domain\activity;
-use block_sic\app\domain\lesson;
-use block_sic\app\domain\section;
+use block_sic\app\application\section_finder;
+use block_sic\app\domain\request;
+use block_sic\app\domain\response;
 use block_sic\app\infraestructure\persistence\repository_context;
 
-class list_sections_controller {
+class section_controller extends controller {
 
-    private $activities;
-    private $lessons;
     private $sectionFinder;
 
-    public function __construct(iactivities_repository $activities, ilessons_repository $lessons) {
-        $this->activities = $activities;
-        $this->lessons = $lessons;
-        $this->sectionFinder = new section_finder(new repository_context());
-    }
+    public function __construct(repository_context $context) {
+        parent::__construct($context);
 
-    public function execute(array $sections): array {
-        $output = array();
-        foreach ($sections as $section) {
-            $output[] = $this->sectionFinder->execute($section->id);
+        $this->sectionFinder = new section_finder($context);
+    }
+    public function details(request $request): response {
+        $this->content->coursepage = true;
+        try {
+            $sid = intval($request->params->id);
+            $this->content->section = $this->sectionFinder->execute($sid)->__toObject();
+        } catch (\Exception $e) {
         }
-        return $output;
+        return $this->response('course/sections/details');
     }
-
 }

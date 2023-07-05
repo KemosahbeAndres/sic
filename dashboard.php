@@ -24,6 +24,8 @@
 
 require_once(__DIR__ . '/../../config.php');
 
+use block_sic\app\controller\section_controller;
+use block_sic\app\controller\student_controller;
 use block_sic\app\SicApplication;
 use block_sic\app\controller\course_controller;
 
@@ -51,9 +53,15 @@ $app = new SicApplication();
 
 $app->default('course', course_controller::class, 'index');
 
+$app->get('freesections', course_controller::class, 'free_sections');
+
 $app->get('participants', course_controller::class, 'participants');
 
 $app->get('sic', course_controller::class, 'sicpanel');
+
+$app->get('sectiondetail', section_controller::class, 'details');
+
+$app->get('studentdetail', student_controller::class, 'details');
 
 $app->run();
 

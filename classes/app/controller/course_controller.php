@@ -28,6 +28,7 @@ use block_sic\app\application\consult_course_controller;
 use block_sic\app\application\participants_finder;
 use block_sic\app\domain\request;
 use block_sic\app\domain\response;
+use block_sic\app\domain\section;
 use block_sic\app\infraestructure\persistence\repository_context;
 
 class course_controller extends controller {
@@ -59,7 +60,24 @@ class course_controller extends controller {
     }
 
     public function sicpanel(request $request): response {
+        $course = $this->courseLoader->execute($request->params->courseid);
+        $students = $this->context->students->execute($request->params->courseid);
+        $this->content->course = $course->__toObject();
+        $this->content->course->nmodules = count($course->get_modules());
+        $this->content->course->nstudents = count($students);
         return $this->response('sic/sicpanel');
+    }
+
+    public function free_sections(request $request): response {
+        $this->content->coursepage = true;
+        $course = $this->courseLoader->execute($request->params->courseid);
+        $sections = $course->get_excluded_sections();
+        $this->content->sections = array();
+        /** @var section $section */
+        foreach($sections as $section){
+            $this->content->sections[] = $section->__toObject();
+        }
+        return $this->response('course/freesections');
     }
 
 }

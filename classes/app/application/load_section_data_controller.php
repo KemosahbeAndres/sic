@@ -70,7 +70,7 @@ class load_section_data_controller {
                 if(!$activity->is_mandatory()) {
                     continue;
                 }
-                $grade = $this->grades->between($user->get_id(), $activity->toObject());
+                $grade = $this->grades->between($user->get_id(), $activity->__toObject());
                 if (!is_null($grade)) {
                     $user->add_grade(new activity_grade($activity, $grade->grade));
                 }

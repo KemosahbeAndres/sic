@@ -22,45 +22,43 @@
 
     }
 }}
-<!--<span id="templatedata" json="{{template.data}}"></span>-->
 
 {{< block_sic/layout}}
     {{$ content}}
         <div class="card">
-            <div class="card-header hstack hstack-sm gap-3">
-                <h2>Registros Curso</h2>
-                {{> block_sic/sic/sicactionbar}}
-            </div>
             <div class="card-body">
-                {{#course}}
+                <h2 class="text-center">Secciones sin asignar</h2>
+            </div>
+        </div>
+        {{^sections}}
+            <div class="alert alert-warning">No hay secciones para mostrar!</div>
+        {{/sections}}
+        {{#sections}}
+            <div class="card">
+                <div class="card-header hstack hstack-sm gap-3">
+                    <h2>Seccion {{name}}</h2>
+                    <a href="{{sectiondetailurl}}&id={{id}}" class="btn btn-outline-primary">Detalles</a>
+                    {{#manager}}
+                        <a href="#" class="btn btn-outline-success">Asignar</a>
+                    {{/manager}}
+                </div>
+                <div class="card-body">
                     <dl class="row">
                         <div class="col-md-6">
                             <dt>ID</dt>
                             <dd>{{id}}</dd>
                             <dt>Nombre</dt>
-                            <dd>{{code}}</dd>
-                            <dt>Fecha inicio</dt>
-                            <dd>{{startdate}}</dd>
+                            <dd>{{name}}</dd>
                         </div>
                         <div class="col-md-6">
-                            <dt>Fecha fin</dt>
-                            <dd>{{enddate}}</dd>
-                            <dt>Modulos</dt>
-                            <dd>{{nmodules}}</dd>
-                            <dt>Alumnos</dt>
-                            <dd>{{nstudents}}</dd>
+                            <dt>Actividades</dt>
+                            <dd>{{nactivities}}</dd>
+                            <dt>Clases</dt>
+                            <dd>{{nlessons}}</dd>
                         </div>
                     </dl>
-                {{/course}}
+                </div>
             </div>
-        </div>
-        <div class="card">
-            <div class="card-header">
-                <h2>Historial de Registros</h2>
-            </div>
-            <div class="card-body">
-                <p class="alert alert-info">Proximamente!</p>
-            </div>
-        </div>
+        {{/sections}}
     {{/ content}}
 {{/ block_sic/layout}}

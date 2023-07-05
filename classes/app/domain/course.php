@@ -99,6 +99,18 @@ class course {
         return $activities;
    }
 
+   public function get_lessons(): array {
+        $lessons = array();
+       /** @var module $module */
+       foreach ($this->modulos as $module) {
+           /** @var lesson $lesson */
+           foreach ($module->get_lessons() as $lesson) {
+               $lessons[] = $lesson;
+           }
+        }
+       return $lessons;
+   }
+
    public function get_excluded_sections(): array {
         return array_filter($this->mdlsections, function (section $section) {
             return !$section->assigned();

@@ -60,7 +60,6 @@ final class student extends user {
         $this->state = $state;
     }
 
-
     /**
      * @return array
      */
@@ -153,6 +152,20 @@ final class student extends user {
         $this->grades[] = $grade;
     }
 
+    public function get_average(): int {
+        $average = 0;
+        $count = count($this->grades);
+        $grade_amount = 0;
+        /** @var activity_grade $grade */
+        foreach ($this->grades as $grade){
+            $grade_amount += $grade->get_grade();
+        }
+        if($grade_amount > 0 && $count > 0) {
+            $average = $grade_amount / $count;
+        }
+        return $average;
+    }
+
     public function get_progress(): int {
         $total = $this->count_completions();
         $completed = 0;
@@ -185,11 +198,11 @@ final class student extends user {
         return count($this->completions);
     }
 
-    public function toObject(): object {
+    public function __toObject(): object {
         $modules = array();
         /** @var module $module */
         foreach ($this->get_course()->get_modules() as $module){
-            $modulo = $module->toObject();
+            $modulo = $module->__toObject();
             $activities = array();
             /** @var activity $activity */
             foreach ($module->get_activities() as $activity) {
@@ -197,7 +210,7 @@ final class student extends user {
                     /** @var activity_completion $completion */
                     foreach ($this->completions as $completion) {
                         if($completion->get_activity()->equal($activity)){
-                            $actividad = $activity->toObject();
+                            $actividad = $activity->__toObject();
                             $actividad->completed = $completion->completed() ? "Si" : "No";
                             $activities[] = $actividad;
                             break;
@@ -209,7 +222,7 @@ final class student extends user {
             $lessons = array();
             /** @var lesson $lesson */
             foreach ($module->get_lessons() as $lesson) {
-                $clase = $lesson->toObject();
+                $clase = $lesson->__toObject();
                 /** @var lesson_attendance $attendance */
                 foreach ($this->attendances as $attendance) {
                     if($attendance->get_lesson()->equal($lesson)) {
@@ -225,10 +238,13 @@ final class student extends user {
         return (object) [
             'id' => $this->get_id(),
             'name' => $this->get_name(),
-            'run' => $this->get_full_rut(),
+            'rut' => $this->get_full_rut(),
+            'role' => $this->get_role(),
             'progress' => $this->get_progress(),
             'time' => $this->get_connection_time(),
+            'hours' => number_format($this->get_connection_time() / 60 / 60, 2),
             'state' => $this->get_state()->get_state(),
+            'average' => number_format($this->get_average(), 2),
             'studying' => $this->get_state()->studying(),
             'reproved' => $this->get_state()->reproved(),
             'approved' => $this->get_state()->approved(),
@@ -236,5 +252,35 @@ final class student extends user {
             'modules' => $modules
         ];
     }
+
+    /**
+     * @return array
+     */
+    public function get_dedications(): array {
+        return $this->dedications;
+    }
+
+    /**
+     * @return array
+     */
+    public function get_completions(): array {
+        return $this->completions;
+    }
+
+    /**
+     * @return array
+     */
+    public function get_attendances(): array {
+        return $this->attendances;
+    }
+
+    /**
+     * @return array
+     */
+    public function get_grades(): array {
+        return $this->grades;
+    }
+
+
 
 }

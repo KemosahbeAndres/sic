@@ -108,30 +108,30 @@
                     {{> block_sic/participants/studentsactionbar}}
                 </div>
                 <div class="card-body">
-                    <table class="table table-striped table-hover">
+                    <table class="table table-striped table-hover table-responsive-sm">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <th>Acciones</th>
                                 <th>Nombre</th>
                                 <th>Rut</th>
                                 <th>Avance</th>
                                 <th>Tiempo Conexion</th>
                                 <th>Promedio</th>
-                                <th>Acciones</th>
+                                <th>Estado</th>
                             </tr>
                         </thead>
                         <tbody>
                             {{#students}}
                                 <tr>
-                                    <td>{{id}}</td>
+                                    <td>
+                                        <a class="btn btn-outline-primary" href="{{studentdetailurl}}&id={{id}}">Detalles</a>
+                                    </td>
                                     <td>{{name}}</td>
                                     <td>{{rut}}</td>
-                                    <td>0%</td>
-                                    <td>0 horas</td>
-                                    <td>0</td>
-                                    <td>
-                                        <a href="#" class="btn btn-outline-primary">Detalles</a>
-                                    </td>
+                                    <td>{{progress}}%</td>
+                                    <td>{{hours}} horas</td>
+                                    <td>{{average}}</td>
+                                    <td>{{state}}</td>
                                 </tr>
                             {{/students}}
                         </tbody>

@@ -55,7 +55,8 @@ class activity {
         return (object) [
             'id' => $this->id,
             'code' => $this->code,
-            'mandatory' => $this->mandatory,
+            'mandatory' => $this->mandatory ? "SI" : "NO",
+            'instance' => $this->instance,
             'type' => $this->type
         ];
     }

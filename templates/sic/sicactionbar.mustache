@@ -24,8 +24,16 @@
 }}
 
 {{#manager}}
-    <a class="btn btn-outline-warning" href="#">Revisar Registros</a>
-    <a class="btn btn-outline-primary" href="#">Descargar Registros</a>
+    <a class="btn btn-outline-warning" href="#">Resumen</a>
+    <div class="dropdown">
+        <a class="btn btn-outline-primary dropdown-toggle" id="downloadDropdownMenu" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+            Descargar
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="downloadDropdownMenu">
+            <li><a class="dropdown-item disabled" href="#">Registro PDF (*.pdf)</a></li>
+            <li><a class="dropdown-item" href="#">Registro JSON (*.json)</a></li>
+        </ul>
+    </div>
     <a class="btn btn-outline-success" href="#">Enviar Registros</a>
 {{/manager}}
 

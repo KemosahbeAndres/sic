@@ -31,22 +31,26 @@ class grades_repository implements igrades_repository {
     public function between(int $userid, object $activity): ?object {
         global $DB;
         $key = $activity->type;
+        $mod = $activity->type;
         if ($activity->type == "lesson") {
             $key .= "id";
         }
-        $table = $activity->type . "_grades";
+        $table = $mod . "_grades";
         $instance = $activity->instance;
-        if ($table != "lesson" || $table != "assign" || $table != "quiz") {
+        if ($mod != "lesson" && $mod != "assign" && $mod != "quiz" && $mod != "data" && $mod != "scorm" && $mod != "glossary" && $mod != "forum") {
             return null;
         }
-        $record = $DB->get_record($table, [$key => $instance, 'userid' => $userid], '*', IGNORE_MISSING);
+        try{
+            $record = $DB->get_record($table, [$key => $instance, 'userid' => $userid], '*', IGNORE_MISSING);
+        }catch (\Exception $e) {
+            return null;
+        }
         if (is_bool($record) && $record == false) {
             return null;
         }
         $output = new \stdClass();
-        $output->grade = $record->grade;
+        $output->grade = intval($record->grade);
         return $output;
-
     }
 
 }
