@@ -59,6 +59,8 @@ $app->get('participants', course_controller::class, 'participants');
 
 $app->get('sic', course_controller::class, 'sicpanel');
 
+$app->get('resume', course_controller::class, 'resume');
+
 $app->get('sectiondetail', section_controller::class, 'details');
 
 $app->get('studentdetail', student_controller::class, 'details');

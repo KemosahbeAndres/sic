@@ -30,17 +30,19 @@ class section {
     private $assigned;
     private $activities;
     private $lessons;
+    private $module;
 
     /**
      * @param $id
      * @param $name
      */
-    public function __construct(int $id, string $name, bool $assigned) {
+    public function __construct(int $id, string $name, bool $assigned, $module = null) {
         $this->id = $id;
         $this->name = trim($name);
         $this->assigned = $assigned;
         $this->activities = array();
         $this->lessons = array();
+        $this->module = $module;
     }
 
     public function equal(section $section): bool {
@@ -65,7 +67,8 @@ class section {
             'activities' => $activities,
             'nactivities' => count($activities),
             'lessons' => $lessons,
-            'nlessons' => count($lessons)
+            'nlessons' => count($lessons),
+            'module' => $this->module
         ];
     }
     public function object(): object {

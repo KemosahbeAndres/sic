@@ -27,6 +27,7 @@ namespace block_sic\app\application\contracts;
 interface imodules_repository {
     public function by_id(int $id): object;
     public function related_to(int $courseid): array;
+    public function from(int $sectionid): ?object;
     public function attach_to(object $module, int $courseid);
     public function dettach(int $moduleid);
 

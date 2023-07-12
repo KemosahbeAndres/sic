@@ -24,6 +24,38 @@
 
 namespace block_sic\app\application\sic;
 
+use block_sic\app\domain\course;
+use block_sic\app\domain\module;
+
 class modules_handler extends abstract_handler {
+    /**
+     * @var course
+     */
+    protected $course;
+
+    /**
+     * @param course $course
+     */
+    public function __construct(course $course) {
+        $this->course = $course;
+    }
+
+    public function handle(object $request): ?object {
+
+        foreach ($request->listaAlumnos as $key=>$alumno){
+            $request->listaAlumnos[$key]->listaModulos = array();
+            /** @var module $module */
+            foreach ($this->course->get_modules() as $module){
+                $modulo = new \stdClass();
+
+                $modulo->codigoModulo = $module->get_code();
+
+                $request->listaAlumnos[$key]->listaModulos[] = $modulo;
+            }
+        }
+
+        return parent::handle($request);
+    }
+
 
 }

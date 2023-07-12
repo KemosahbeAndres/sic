@@ -31,7 +31,7 @@ class users_repository implements iusers_repository {
 
     public function by_id(int $id): object {
         global $DB;
-        $record = $DB->get_record('user', ['id' => $id], '*', MUST_EXISTS);
+        $record = $DB->get_record('user', ['id' => $id], '*', MUST_EXIST);
         $name = strval($record->firstname . " " . $record->lastname);
         $splitted = preg_split("/-/", $record->idnumber);
         $rut = intval($splitted[0]);
@@ -43,7 +43,7 @@ class users_repository implements iusers_repository {
         $output->dv = $dv;
         return $output;
     }
-    protected function related_to(int $courseid, int $rolecode): array {
+    protected function related_to(int $courseid, int $rolecode = 5): array {
         global $DB;
         $output = Arrays::void();
         $sql = "SELECT id FROM {user} WHERE id IN
@@ -52,6 +52,14 @@ class users_repository implements iusers_repository {
         $records = $DB->get_records_sql($sql, ['courseid' => $courseid, 'rolecode' => $rolecode]);
         foreach ($records as $record) {
             $user = $this->by_id($record->id);
+            try{
+                $table = "sic_matriculas";
+                $condition = [ 'user_id' => $user->id, 'course_id' => $courseid ];
+                if($DB->record_exists($table, $condition)){
+                    $enrol = $DB->get_record($table, $condition, '*', MUST_EXIST);
+                    $user->active = $enrol->vigente == 1;
+                }
+            }catch(\exception $e){}
             $output[] = $user;
         }
         return $output;

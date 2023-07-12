@@ -28,7 +28,7 @@
         {{#student}}
             <div class="card">
                 <div class="card-header hstack hstack-sm gap-3">
-                    <h2>Estudiante</h2>
+                    <h2>Detalles estudiante</h2>
                     <a href="#" class="btn btn-outline-primary">Cambiar Estado</a>
                 </div>
                 <div class="card-body">
@@ -45,7 +45,12 @@
                         </div>
                         <div class="col-md-6">
                             <dt>Estado</dt>
-                            <dd>{{state}}</dd>
+                            <dd class="badge
+                            {{#studying}}badge-primary{{/studying}}
+                            {{#approved}}badge-success{{/approved}}
+                            {{#reproved}}badge-danger{{/reproved}}">
+                                {{state}}
+                            </dd>
                             <dt>Avance</dt>
                             <dd>{{progress}}%</dd>
                             <dt>Tiempo conexion</dt>

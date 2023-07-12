@@ -24,6 +24,18 @@
 
 namespace block_sic\app\application\sic;
 
-class activities_handler extends abstract_handler {
+use block_sic\app\domain\course;
 
+class activities_handler extends abstract_handler {
+    /**
+     * @var course
+     */
+    protected $course;
+
+    /**
+     * @param course $course
+     */
+    public function __construct(course $course) {
+        $this->course = $course;
+    }
 }

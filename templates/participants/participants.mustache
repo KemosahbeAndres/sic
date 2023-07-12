@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template block_sic/detalles
+    @template block_sic/participants
 
 
     Example context (json):{
@@ -33,15 +33,19 @@
                         <h2>Gestor</h2>
                     </div>
                     <div class="card-body">
-                        <dl>
-                            <dt>ID</dt>
-                            <dd>{{manager.id}}</dd>
-                            <dt>Nombre</dt>
-                            <dd>{{manager.name}}</dd>
-                            <dt>Rut</dt>
-                            <dd>{{manager.rut}}</dd>
-                            <dt>Rol</dt>
-                            <dd>{{manager.role}}</dd>
+                        <dl class="row">
+                            <div class="col-md-6">
+                                <dt>ID</dt>
+                                <dd>{{manager.id}}</dd>
+                                <dt>Nombre</dt>
+                                <dd>{{manager.name}}</dd>
+                            </div>
+                            <div class="col-md-6">
+                                <dt>Rut</dt>
+                                <dd>{{manager.rut}}</dd>
+                                <dt>Rol</dt>
+                                <dd>{{manager.role}}</dd>
+                            </div>
                         </dl>
                     </div>
                 </div>
@@ -105,7 +109,6 @@
             <div class="card">
                 <div class="card-header hstack hstack-sm gap-3">
                     <h2>Estudiantes</h2>
-                    {{> block_sic/participants/studentsactionbar}}
                 </div>
                 <div class="card-body">
                     <table class="table table-striped table-hover table-responsive-sm">
@@ -124,18 +127,33 @@
                             {{#students}}
                                 <tr>
                                     <td>
-                                        <a class="btn btn-outline-primary" href="{{studentdetailurl}}&id={{id}}">Detalles</a>
+                                        {{> block_sic/participants/studentsactionbar}}
                                     </td>
                                     <td>{{name}}</td>
                                     <td>{{rut}}</td>
                                     <td>{{progress}}%</td>
                                     <td>{{hours}} horas</td>
                                     <td>{{average}}</td>
-                                    <td>{{state}}</td>
+                                    <td>
+                                        {{#active}}
+                                            <p class="badge
+                                                {{#studying}}badge-primary{{/studying}}
+                                                {{#approved}}badge-success{{/approved}}
+                                                {{#reproved}}badge-danger{{/reproved}}">
+                                                {{state}}
+                                            </p>
+                                        {{/active}}
+                                        {{^active}}
+                                            <p class="badge badge-danger">exluido</p>
+                                        {{/active}}
+                                    </td>
                                 </tr>
                             {{/students}}
                         </tbody>
                     </table>
+                    {{^students}}
+                        <div class="alert alert-warning">No hay alumnos inscritos!</div>
+                    {{/students}}
                 </div>
             </div>
         {{/participants}}

@@ -23,8 +23,15 @@
     }
 }}
 
+
+<a class="btn btn-outline-primary" href="{{studentdetailurl}}&id={{id}}">Detalles</a>
 {{#manager}}
-    <a class="btn btn-outline-danger" href="#">Excluir</a>
+    {{#active}}
+        <a href="#" class="btn btn-outline-danger">Excluir</a>
+    {{/active}}
+    {{^active}}
+        <a href="#" class="btn btn-outline-success">Incluir</a>
+    {{/active}}
 {{/manager}}
 
 <!--

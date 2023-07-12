@@ -267,18 +267,20 @@ dd {
 }
 
 table.table {
-    border: 1px solid rgba(0, 0, 0, .125);
+    /*border: 1px solid rgba(0, 0, 0, .125);*/
+    border: none;
     border-radius: 0;
     background-color: white;
 }
 
 table.table thead th {
-    border-bottom: none;
+    border: none;
 }
 
 table.table th,
 table.table td {
     vertical-align: middle;
+    border: none;
 }
 
 .fade-enter-active,

@@ -35,11 +35,13 @@ class request {
      * @var user
      */
     public $user;
+    public $config;
     public function __construct(){
         $this->action = "";
         $this->cookies = new stdClass();
         $this->params = new stdClass();
         $this->user = new stdClass();
+        $this->config = new stdClass();
     }
 
 }

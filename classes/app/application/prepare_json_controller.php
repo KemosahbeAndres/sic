@@ -28,24 +28,38 @@ use block_sic\app\application\sic\activities_handler;
 use block_sic\app\application\sic\course_handler;
 use block_sic\app\application\sic\modules_handler;
 use block_sic\app\application\sic\users_handler;
+use block_sic\app\infraestructure\persistence\repository_context;
 
 class prepare_json_controller {
+    /**
+     * @var consult_course_controller
+     */
+    private $courseLoader;
+    /**
+     * @var participants_finder
+     */
+    private $participantsFinder;
     private $coursehandler;
 
     /**
      * @param consult_course_controller $courseloader
      * @param load_course_data_controller $userdataloader
      */
-    public function __construct(consult_course_controller $courseloader, load_course_data_controller $userdataloader) {
-        $this->coursehandler = new course_handler($courseloader);
-        $this->coursehandler
-            ->set_next(new users_handler($userdataloader))
-            ->set_next(new modules_handler())
-            ->set_next(new activities_handler());
+    public function __construct(consult_course_controller $courseloader, participants_finder $studentsFinder) {
+        $this->courseLoader = $courseloader;
+        $this->participantsFinder = $studentsFinder;
+        $this->coursehandler = null;
     }
 
-    public function execute(object $request): ?object {
-        return $this->coursehandler->handle($request);
+    public function execute(int $courseid, object $config): ?object {
+        $course = $this->courseLoader->execute($courseid);
+        $participants = $this->participantsFinder->execute($course);
+        $students = $participants->students;
+        $this->coursehandler = new course_handler($course, $config);
+        $this->coursehandler
+            ->set_next(new users_handler($course, $students));
+        $object = new \stdClass();
+        return $this->coursehandler->handle($object);
     }
 
 }

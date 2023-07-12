@@ -48,6 +48,7 @@ class SicApplication {
 
     private function __init(login_controller $logged){
         global $USER;
+
         $this->request->cookies = filter_input_array(INPUT_COOKIE);
         $post = filter_input_array(INPUT_POST);
         $get = filter_input_array(INPUT_GET);
@@ -61,6 +62,18 @@ class SicApplication {
         $this->request->action = strval($this->request->params->action);
         $courseid = intval($this->request->params->courseid);
         $this->request->user = $logged->execute($USER->id, $courseid);
+
+        // CONFIGURATION
+        $global_config = $this->context->config->from_global();
+        $local_config = $this->context->config->from_instance(intval($this->request->params->instance));
+
+        $this->request->config->rut_otec = strval($global_config->config_rutotec);
+        $this->request->config->token = strval($global_config->config_token);
+        $this->request->config->codigo_oferta = strval($local_config->sic_codigo_oferta);
+        $this->request->config->codigo_grupo = strval($local_config->sic_codigo_grupo);
+        $this->request->config->courseid = intval($local_config->sic_courseid);
+        $this->request->config->rol = intval($local_config->sic_rol);
+        var_dump($this->request->config);
     }
 
     public function get(string $action, string $controller, string $function) {

@@ -27,6 +27,7 @@ namespace block_sic\app\domain;
 final class student extends user {
 
     private $state;
+    private $active;
     private $dedications;
     private $completions;
     private $attendances;
@@ -38,13 +39,14 @@ final class student extends user {
      * @param int $rut
      * @param string $dv
      */
-    public function __construct(int $id, string $name, int $rut, string $dv, string $role) {
+    public function __construct(int $id, string $name, int $rut, string $dv, string $role, bool $active) {
         parent::__construct($id, $name, $rut, $dv, $role);
         $this->state = null;
         $this->dedications = array();
         $this->completions = array();
         $this->attendances = array();
         $this->grades = array();
+        $this->active = $active;
     }
     /**
      * @return state
@@ -58,6 +60,10 @@ final class student extends user {
      */
     public function set_state(state $state) {
         $this->state = $state;
+    }
+
+    public function is_active(): bool {
+        return $this->active;
     }
 
     /**
@@ -163,6 +169,9 @@ final class student extends user {
         if($grade_amount > 0 && $count > 0) {
             $average = $grade_amount / $count;
         }
+        if($average > 100) {
+            return 100;
+        }
         return $average;
     }
 
@@ -240,11 +249,12 @@ final class student extends user {
             'name' => $this->get_name(),
             'rut' => $this->get_full_rut(),
             'role' => $this->get_role(),
+            'active' => $this->is_active(),
             'progress' => $this->get_progress(),
             'time' => $this->get_connection_time(),
             'hours' => number_format($this->get_connection_time() / 60 / 60, 2),
             'state' => $this->get_state()->get_state(),
-            'average' => number_format($this->get_average(), 2),
+            'average' => intval($this->get_average()),
             'studying' => $this->get_state()->studying(),
             'reproved' => $this->get_state()->reproved(),
             'approved' => $this->get_state()->approved(),

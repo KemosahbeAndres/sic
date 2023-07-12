@@ -44,7 +44,7 @@ class students_repository {
         $users = $this->users->students_of($courseid);
         foreach ($users as $u){
             $role = $this->roles->between($u->id, $courseid);
-            $student = new student($u->id, $u->name, $u->rut, $u->dv, $role->get_rolename());
+            $student = new student($u->id, $u->name, $u->rut, $u->dv, $role->get_rolename(), $u->active);
             $st = $this->states->between($student->get_id(), $courseid);
             $student->set_state(new state($st));
             $students[] = $student;

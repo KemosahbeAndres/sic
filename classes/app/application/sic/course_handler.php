@@ -25,25 +25,42 @@
 namespace block_sic\app\application\sic;
 
 use block_sic\app\application\consult_course_controller;
+use block_sic\app\domain\course;
 
 class course_handler extends abstract_handler {
-    private $courseloader;
+    /**
+     * @var course
+     */
+    private $course;
+    private $rut;
+    private $systemid;
+    private $token;
+    private $oferta;
+    private $grupo;
 
     /**
-     * @param consult_course_controller $courseloader
+     * @param course $course
      */
-    public function __construct(consult_course_controller $courseloader) {
-        $this->courseloader = $courseloader;
+    public function __construct(course $course, object $config) {
+        $this->course = $course;
+        $this->rut = trim(strval($config->rut_otec));
+        $this->systemid = 1350;
+        $this->token = trim(strval($config->token));
+        $this->oferta = trim(strval($config->codigo_oferta));
+        $this->grupo = trim(strval($config->codigo_grupo));
     }
 
     public function handle(object $request): ?object {
-        $course = $this->courseloader->execute($request->courseid);
 
-        $object = new \stdClass();
+        $request->rutOtec = $this->rut;
+        $request->idSistema = $this->systemid;
+        $request->token = $this->token;
+        $request->codigoOferta = $this->oferta;
+        $request->codigoGrupo = $this->grupo;
+        $request->cantActividadSincronica = $this->course->get_sync_activities();
+        $request->cantActividadAsincronica = $this->course->get_async_activities();
 
-        $object->course = $course;
-
-        return parent::handle($object);
+        return parent::handle($request);
     }
 
 }

@@ -25,15 +25,17 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-if (isset($hassiteconfig) && $hassiteconfig) {
-    global $ADMIN;
-    $ADMIN->add('blockplugins', new admin_category('block_sic_settings', new lang_string('pluginname', 'block_sic')));
-    $settingspage = new admin_settingpage('manageblocksic', new lang_string('manage', 'block_sic'));
+global $ADMIN;
+if ($ADMIN->fulltree) {
 
-    if ($ADMIN->fulltree) {
-        $rut_otec = new admin_setting_configtext("block_sic/rutotec", get_string('rutotec','block_sic'), get_string('rutotecdesc','block_sic'), "", PARAM_TEXT);
-        $settingspage->add($rut_otec);
-    }
+    $rut_otec = new admin_setting_configtext("block_sic/config_rutotec",
+        get_string('rutotec','block_sic'),
+        get_string('rutotecdesc','block_sic'), "", PARAM_TEXT);
+    /** @var admin_settingpage|external_settings|false|navigation_node|null|object|stdClass $settings */
+    $settings->add($rut_otec);
+    $token = new admin_setting_configtext("block_sic/config_token",
+        get_string('token','block_sic'),
+        get_string('tokendesc','block_sic'), "", PARAM_TEXT);
+    $settings->add($token);
 
-    $ADMIN->add('blockplugins', $settingspage);
 }

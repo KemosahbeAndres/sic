@@ -50,6 +50,17 @@ class modules_repository implements imodules_repository {
         }
         return $list;
     }
+    public function from(int $sectionid): ?object{
+        global $DB;
+        $table = "sic_asignaciones";
+        $condition = ['section_id' => $sectionid];
+        if ($DB->record_exists($table, $condition)) {
+            $record = $DB->get_record($table, $condition, '*', MUST_EXIST);
+            $moduleid = intval($record->id_modulo);
+            return $this->by_id($moduleid);
+        }
+        return null;
+    }
     public function attach_to(object $module, int $courseid) {
         global $DB;
         $table = 'sic_modulos';

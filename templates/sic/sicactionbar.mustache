@@ -24,9 +24,9 @@
 }}
 
 {{#manager}}
-    <a class="btn btn-outline-warning" href="#">Resumen</a>
+    <a class="btn btn-outline-warning" href="{{resumeurl}}">Resumen</a>
     <div class="dropdown">
-        <a class="btn btn-outline-primary dropdown-toggle" id="downloadDropdownMenu" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+        <a class="btn btn-outline-primary dropdown-toggle {{^ course.tokenvalid }}disabled{{/ course.tokenvalid}}" id="downloadDropdownMenu" href="#" data-bs-toggle="dropdown" aria-expanded="false">
             Descargar
         </a>
         <ul class="dropdown-menu" aria-labelledby="downloadDropdownMenu">
@@ -34,7 +34,7 @@
             <li><a class="dropdown-item" href="#">Registro JSON (*.json)</a></li>
         </ul>
     </div>
-    <a class="btn btn-outline-success" href="#">Enviar Registros</a>
+    <a class="btn btn-outline-success {{^ course.tokenvalid}}disabled{{/ course.tokenvalid}}" href="#">Enviar Registros</a>
 {{/manager}}
 
 <!--

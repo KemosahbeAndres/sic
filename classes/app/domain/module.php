@@ -53,7 +53,9 @@ class module {
         $sections = array();
         /** @var section $section */
         foreach ($this->get_sections() as $section) {
-            $sections[] = $section->__toObject();
+            $s = $section->__toObject();
+            $s->module = $this->basicObject();
+            $sections[] = $s;
         }
         return (object) [
             'id' => $this->get_id(),
@@ -64,6 +66,17 @@ class module {
             'async' => $this->get_async_amount(),
             'sections' => $sections
         ];
+    }
+
+    public function basicObject(): object {
+        return (object)[
+            'id' => $this->get_id(),
+            'code' => $this->get_code(),
+            'startdate' => Dates::format($this->get_startdate()),
+            'enddate' => Dates::format($this->get_enddate()),
+            'sync' => $this->get_sync_amount(),
+            'async' => $this->get_async_amount(),
+            ];
     }
 
     public function get_id(): int {

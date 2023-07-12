@@ -137,4 +137,21 @@ class course {
             'sections' => $sections
         ];
    }
+   public function get_sync_activities(): int {
+        $sync = 0;
+       /** @var module $module */
+       foreach ($this->get_modules() as $module){
+           $sync += $module->get_sync_amount();
+       }
+       return $sync;
+   }
+   public function get_async_activities(): int {
+        $async = 0;
+       /** @var module $module */
+       foreach ($this->get_modules() as $module){
+           $async += $module->get_async_amount();
+       }
+       return $async;
+   }
+
 }

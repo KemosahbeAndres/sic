@@ -52,15 +52,19 @@ defined('MOODLE_INTERNAL') or die();
 class block_sic extends block_base{
 
     public function init() {
-
-        $this->title = get_string('sic', 'block_sic');
-
+        $this->title = get_string('pluginname', 'block_sic');
     }
 
     public function has_config() {
-
         return true;
+    }
 
+    /**
+     * Core function, specifies where the block can be used.
+     * @return array
+     */
+    public function applicable_formats() {
+        return array('course-view' => true, 'mod' => true);
     }
 
     private function build() {
@@ -303,10 +307,29 @@ class block_sic extends block_base{
 
     }
 
+    /**
+     * Allows the block to be added multiple times to a single page
+     * @return boolean
+     */
     public function instance_allow_config() {
-
         return true;
+    }
 
+    /**
+     * Return the plugin config settings for external functions.
+     *
+     * @return stdClass the configs for both the block instance and plugin
+     * @since Moodle 3.8
+     */
+    public function get_config_for_external() {
+        // Return all settings for all users since it is safe (no private keys, etc..).
+        $instanceconfigs = !empty($this->config) ? $this->config : new stdClass();
+        $pluginconfigs = get_config('block_activity_results');
+
+        return (object) [
+            'instance' => $instanceconfigs,
+            'plugin' => $pluginconfigs,
+        ];
     }
 
 }

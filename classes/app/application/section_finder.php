@@ -40,12 +40,14 @@ class section_finder {
     /**
      * @throws \dml_exception
      */
-    public function execute(int $id): section {
+    public function execute(int $id): ?section {
         $section = $this->context->sections->by_id($id);
+        $module = $this->context->modules->from($id);
         $seccion = new section(
             $section->id,
             $section->name,
-            $section->assigned
+            $section->assigned,
+            $module
         );
         $activitylist = $this->context->activities->related_to($section);
         //echo "FOUND: ".count($activitylist);

@@ -25,6 +25,8 @@
 namespace block_sic\app\infraestructure\persistence;
 
 final class repository_context {
+    public $config;
+
     public $courses;
     public $modules;
     public $sections;
@@ -46,6 +48,8 @@ final class repository_context {
     public $states;
 
     public function __construct(){
+        $this->config = new configuration_repository();
+
         $this->courses = new courses_repository();
         $this->modules = new modules_repository();
         $this->sections = new sections_repository();

@@ -103,7 +103,6 @@ class states_repository implements istates_repository {
      * @throws dml_exception
      */
     public function by_state(string $state): ?object {
-        global $DB;
         $records = $this->all();
         foreach ($records as $record) {
             if(strtolower(trim($state)) == strtolower(trim($record->estado)) ) {
@@ -143,7 +142,7 @@ class states_repository implements istates_repository {
             $record = $this->by_code(1);
         }
         $dataobject->id_estado = $record->id;
-        $dataobject->vigente = 1;
+        $dataobject->vigente = true;
         if ($DB->record_exists('sic_matriculas', ['course_id' => $courseid, 'user_id' => $userid])) {
             $matricula = $DB->get_record('sic_matriculas', ['course_id' => $courseid, 'user_id' => $userid], '*', MUST_EXISTS);
             $dataobject->id = $matricula->id;

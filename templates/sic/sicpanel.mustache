@@ -39,10 +39,21 @@
                             <dd>{{id}}</dd>
                             <dt>Nombre</dt>
                             <dd>{{code}}</dd>
-                            <dt>Fecha inicio</dt>
-                            <dd>{{startdate}}</dd>
+                            <dt>Rut OTEC</dt>
+                            <dd>{{rutotec}}{{^rutotec}}-{{/rutotec}}</dd>
+                            <dt>Codigo Oferta</dt>
+                            <dd>{{codigo_oferta}}{{^codigo_oferta}}-{{/codigo_oferta}}</dd>
+                            <dt>Codigo Grupo</dt>
+                            <dd>{{codigo_grupo}}{{^codigo_grupo}}-{{/codigo_grupo}}</dd>
                         </div>
                         <div class="col-md-6">
+                            <dt>Estado Token</dt>
+                            <dd>
+                                {{#tokenvalid}}<p class="badge badge-success">válido</p>{{/tokenvalid}}
+                                {{^tokenvalid}}<p class="badge badge-danger">inválido</p>{{/tokenvalid}}
+                            </dd>
+                            <dt>Fecha inicio</dt>
+                            <dd>{{startdate}}</dd>
                             <dt>Fecha fin</dt>
                             <dd>{{enddate}}</dd>
                             <dt>Modulos</dt>
@@ -51,7 +62,18 @@
                             <dd>{{nstudents}}</dd>
                         </div>
                     </dl>
+                    {{^tokenvalid}}
+                        <div class="alert alert-danger">Debe ingresar un token y rut de otec validos!</div>
+                    {{/tokenvalid}}
                 {{/course}}
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h2>Validacion de Registros</h2>
+            </div>
+            <div class="card-body">
+                <p class="alert alert-warning">En desarrollo!</p>
             </div>
         </div>
         <div class="card">

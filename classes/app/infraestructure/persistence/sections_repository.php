@@ -31,7 +31,7 @@ use stdClass;
 class sections_repository implements isections_repository {
     public function by_id(int $id): object {
         global $DB;
-        $section = $DB->get_record('course_sections', ['id' => $id], '*', MUST_EXISTS);
+        $section = $DB->get_record('course_sections', ['id' => $id], '*', MUST_EXIST);
         $extras = $DB->get_record('sic_asignaciones', ['section_id' => $id], '*', IGNORE_MISSING);
         $name = "Sin nombre";
         if (!is_null($section->name)) {
@@ -73,7 +73,7 @@ class sections_repository implements isections_repository {
         $object->id_modulo = $moduleid;
         $object->section_id = $sectionid;
         if ($DB->record_exists('sic_asignaciones', ['section_id' => $sectionid])) {
-            $record = $DB->get_record('sic_asignaciones', ['section_id' => $sectionid], '*', MUST_EXISTS);
+            $record = $DB->get_record('sic_asignaciones', ['section_id' => $sectionid], '*', MUST_EXIST);
             $object->id = $record->id;
             $object->created = $record->created;
             $DB->update_record('sic_asignaciones', $object);

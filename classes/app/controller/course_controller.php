@@ -42,7 +42,7 @@ class course_controller extends controller {
     private $participantsFinder;
     public function __construct(repository_context $context) {
         parent::__construct($context);
-        $this->courseLoader = new consult_course_controller($this->context);
+        $this->courseLoader = new consult_course_controller($context);
         $this->participantsFinder = new participants_finder($context);
     }
 
@@ -65,7 +65,17 @@ class course_controller extends controller {
         $this->content->course = $course->__toObject();
         $this->content->course->nmodules = count($course->get_modules());
         $this->content->course->nstudents = count($students);
+        $this->content->course->rutotec = $request->config->rut_otec;
+        $this->content->course->tokenvalid = false;
+        $this->content->course->codigo_oferta = $request->config->codigo_oferta;
+        $this->content->course->codigo_grupo = $request->config->codigo_grupo;
+        $this->content->json = json_encode($this->content, JSON_UNESCAPED_UNICODE);
         return $this->response('sic/sicpanel');
+    }
+
+    public function resume(request $request): response {
+        $this->content->sicpanelpage = true;
+        return $this->response('sic/resume');
     }
 
     public function free_sections(request $request): response {
