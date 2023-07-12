@@ -60,8 +60,8 @@ class module {
         return (object) [
             'id' => $this->get_id(),
             'code' => $this->get_code(),
-            'startdate' => Dates::format($this->get_startdate()),
-            'enddate' => Dates::format($this->get_enddate()),
+            'startdate' => Dates::format_date_time($this->get_startdate()),
+            'enddate' => Dates::format_date_time($this->get_enddate()),
             'sync' => $this->get_sync_amount(),
             'async' => $this->get_async_amount(),
             'sections' => $sections
@@ -72,8 +72,8 @@ class module {
         return (object)[
             'id' => $this->get_id(),
             'code' => $this->get_code(),
-            'startdate' => Dates::format($this->get_startdate()),
-            'enddate' => Dates::format($this->get_enddate()),
+            'startdate' => Dates::format_date_time($this->get_startdate()),
+            'enddate' => Dates::format_date_time($this->get_enddate()),
             'sync' => $this->get_sync_amount(),
             'async' => $this->get_async_amount(),
             ];

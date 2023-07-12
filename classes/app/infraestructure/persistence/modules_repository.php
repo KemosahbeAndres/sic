@@ -26,6 +26,7 @@ namespace block_sic\app\infraestructure\persistence;
 
 use block_sic\app\application\contracts\imodules_repository;
 use block_sic\app\utils\Arrays;
+use block_sic\app\utils\Dates;
 use stdClass;
 
 class modules_repository implements imodules_repository {

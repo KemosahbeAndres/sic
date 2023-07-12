@@ -36,28 +36,28 @@ class prepare_json_controller {
      */
     private $courseLoader;
     /**
-     * @var participants_finder
+     * @var student_finder
      */
-    private $participantsFinder;
+    private $studentsFinder;
     private $coursehandler;
 
     /**
      * @param consult_course_controller $courseloader
-     * @param load_course_data_controller $userdataloader
+     * @param student_finder $studentsFinder
      */
-    public function __construct(consult_course_controller $courseloader, participants_finder $studentsFinder) {
+    public function __construct(consult_course_controller $courseloader, student_finder $studentsFinder) {
         $this->courseLoader = $courseloader;
-        $this->participantsFinder = $studentsFinder;
+        $this->studentsFinder = $studentsFinder;
         $this->coursehandler = null;
     }
 
     public function execute(int $courseid, object $config): ?object {
         $course = $this->courseLoader->execute($courseid);
-        $participants = $this->participantsFinder->execute($course);
-        $students = $participants->students;
+        $students = $this->studentsFinder->all($courseid);
+
         $this->coursehandler = new course_handler($course, $config);
-        $this->coursehandler
-            ->set_next(new users_handler($course, $students));
+        $this->coursehandler->set_next(new users_handler($course, $students));
+
         $object = new \stdClass();
         return $this->coursehandler->handle($object);
     }

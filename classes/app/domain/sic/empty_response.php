@@ -22,16 +22,23 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- namespace block_sic\app\utils;
+namespace block_sic\app\domain\sic;
 
-final class Dates {
-    public static function format(int $timestamp): string {
-        return date("Y-m-d", $timestamp);
-    }
-    public static function format_date_time(int $timestamp): string {
-        return date("Y-m-d H:i:s", $timestamp);
-    }
-    public static function totime(string $time): int {
-        return strtotime($time);
+class empty_response extends default_response {
+    public function __construct(string $message = '', array $errors = []) {
+        $errorList = array();
+        if(!empty($errors) and is_string($errors[0])){
+            foreach ($errors as $error){
+                $errorList[] = (object)[
+                    'mensaje' => trim(strval($error))
+                ];
+            }
+        }
+        parent::__construct((object)[
+            'id_proceso' => '',
+            'payloads' => array(),
+            'errors' => $errorList,
+            'respuesta_SIC' => $message
+        ]);
     }
 }

@@ -73,7 +73,6 @@ class SicApplication {
         $this->request->config->codigo_grupo = strval($local_config->sic_codigo_grupo);
         $this->request->config->courseid = intval($local_config->sic_courseid);
         $this->request->config->rol = intval($local_config->sic_rol);
-        var_dump($this->request->config);
     }
 
     public function get(string $action, string $controller, string $function) {

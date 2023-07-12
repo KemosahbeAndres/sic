@@ -24,6 +24,7 @@
 
 require_once(__DIR__ . '/../../config.php');
 
+use block_sic\app\controller\module_controller;
 use block_sic\app\controller\section_controller;
 use block_sic\app\controller\student_controller;
 use block_sic\app\SicApplication;
@@ -64,6 +65,12 @@ $app->get('resume', course_controller::class, 'resume');
 $app->get('sectiondetail', section_controller::class, 'details');
 
 $app->get('studentdetail', student_controller::class, 'details');
+
+//modulos
+
+$app->get('create_module', module_controller::class, 'creating');
+
+$app->post('save_module', module_controller::class, 'save');
 
 $app->run();
 

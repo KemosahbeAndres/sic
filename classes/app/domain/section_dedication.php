@@ -36,7 +36,7 @@ class section_dedication {
     }
 
     public function equal(section_dedication $dedication): bool {
-        return $dedication->get_activity()->get_id() == $this->activity->get_id();
+        return $dedication->get_section()->get_id() == $this->section->get_id();
     }
 
     /**

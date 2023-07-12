@@ -24,6 +24,7 @@
 
 namespace block_sic\app\controller;
 
+use block_sic\app\domain\redirect_response;
 use block_sic\app\domain\view_response;
 use block_sic\app\infraestructure\persistence\repository_context;
 
@@ -44,6 +45,10 @@ class controller {
         }
         $this->content->{trim($name)."page"} = true;
         return new view_response(trim($viewname), $this->content);
+    }
+
+    protected function redirect(string $action, object $params, string $message): redirect_response {
+        return new redirect_response($action, $message, $params);
     }
 
 }

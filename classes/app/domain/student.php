@@ -167,7 +167,7 @@ final class student extends user {
             $grade_amount += $grade->get_grade();
         }
         if($grade_amount > 0 && $count > 0) {
-            $average = $grade_amount / $count;
+            $average = intval($grade_amount / $count);
         }
         if($average > 100) {
             return 100;
@@ -175,8 +175,46 @@ final class student extends user {
         return $average;
     }
 
-    public function get_progress(): int {
-        $total = $this->count_completions();
+    public function get_module_average(module $module): int {
+        $average = 0;
+        $count = 0;
+        $grades = 0;
+        /** @var activity $activity */
+        foreach ($module->get_activities() as $activity){
+            /** @var activity_grade $grade */
+            foreach ($this->grades as $grade){
+                if($activity->equal($grade->get_activity())){
+                    $count += 1;
+                    $grades += $grade->get_grade();
+                }
+            }
+        }
+        if($count > 0 and $grades > 0){
+            $average = intval($grades / $count);
+        }
+        if($average > 100) return 100;
+        return $average;
+    }
+
+    public function count_completions(): int {
+        return count($this->completions);
+    }
+
+    public function count_module_completions(module $module): int {
+        $count = 0;
+        /** @var activity $activity */
+        foreach ($module->get_activities() as $activity){
+            /** @var activity_completion $completion */
+            foreach ($this->completions as $completion){
+                if($activity->equal($completion->get_activity())){
+                    $count += 1;
+                }
+            }
+        }
+        return $count;
+    }
+
+    public function count_completed(): int {
         $completed = 0;
         foreach ($this->get_course()->get_activities() as $activity) {
             if(!$activity->is_mandatory()) {
@@ -185,7 +223,36 @@ final class student extends user {
             $completion = $this->get_completion($activity);
             $completed += $completion->completed() ? 1 : 0;
         }
-        return intval($completed / $total) * 100;
+        return $completed;
+    }
+    public function count_module_completed(module $module): int {
+        $completed = 0;
+        /** @var activity $activity */
+        foreach ($module->get_activities() as $activity){
+            if(!$activity->is_mandatory()) continue;
+            $completion = $this->get_completion($activity);
+            if(!is_null($completion)){
+                $completed += $completion->completed() ? 1 : 0;
+            }
+        }
+        return $completed;
+    }
+
+    public function get_progress(): int {
+        $total = $this->count_completions();
+        if($total <= 0) return 0;
+        $completed = $this->count_completed();
+        $progress = intval($completed / $total) * 100;
+        if($progress > 100) return 100;
+        return $progress;
+    }
+    public function get_module_progress(module $module): int {
+        $module_completions = $this->count_module_completions($module);
+        if($module_completions <= 0) return 0;
+        $module_completed = $this->count_module_completed($module);
+        $progress = intval($module_completed / $module_completions) * 100;
+        if($progress > 100) return 100;
+        return $progress;
     }
     public function count_dedications(): int {
         return count($this->dedications);
@@ -203,8 +270,27 @@ final class student extends user {
         return $total;
     }
 
-    public function count_completions(): int {
-        return count($this->completions);
+    public function get_module_connection_time(module $module): int {
+        $time = 0;
+        /** @var section $section */
+        foreach($module->get_sections() as $section){
+            /** @var section_dedication $dedication */
+            foreach ($this->dedications as $dedication) {
+                if($section->equal($dedication->get_section())) {
+                    $time += $dedication->get_time();
+                }
+            }
+            /** @var lesson $lesson */
+            foreach ($section->get_lessons() as $lesson){
+                /** @var lesson_attendance $attendance */
+                foreach ($this->attendances as $attendance){
+                    if($lesson->equal($attendance->get_lesson())) {
+                        $time += $attendance->is_present() ? $lesson->get_duration() : 0;
+                    }
+                }
+            }
+        }
+        return $time;
     }
 
     public function __toObject(): object {

@@ -24,9 +24,9 @@
 
 namespace block_sic\app\application\sic;
 
-use block_sic\app\application\load_course_data_controller;
-use block_sic\app\application\participants_finder;
+use block_sic\app\domain\activity;
 use block_sic\app\domain\course;
+use block_sic\app\domain\module;
 use block_sic\app\domain\student;
 use block_sic\app\utils\Dates;
 
@@ -53,8 +53,10 @@ class users_handler extends abstract_handler {
         $request->listaAlumnos = array();
         /** @var student $student */
         foreach ($this->students as $student){
+            if(!$student->is_active()) continue;
             $alumno = new \stdClass();
 
+            // ALUMNO
             $alumno->rutAlumno = $student->get_rut();
             $alumno->dvAlumno = $student->get_dv();
             $alumno->tiempoConectividad = $student->get_connection_time();
@@ -63,6 +65,38 @@ class users_handler extends abstract_handler {
             $alumno->porcentajeAvance = $student->get_progress();
             $alumno->fechaInicio = Dates::format_date_time($this->course->get_startdate());
             $alumno->fechaFin = Dates::format_date_time($this->course->get_enddate());
+
+            //MODULOS
+            $alumno->listaModulos = array();
+            /** @var module $module */
+            foreach ($this->course->get_modules() as $module){
+                $modulo = new \stdClass();
+
+                $modulo->codigoModulo = $module->get_code();
+                $modulo->tiempoConectividad = $student->get_module_connection_time($module);
+                $modulo->porcentajeAvance = $student->get_module_progress($module);
+                $modulo->estado = $student->get_state()->get_code();
+                $modulo->fechaInicio = Dates::format_date_time($module->get_startdate());
+                $modulo->fechaFin = Dates::format_date_time($module->get_enddate());
+                $modulo->notaModulo = $student->get_module_average($module);
+                $modulo->cantActividadAsincronica = $module->get_async_amount();
+                $modulo->cantActividadSincronica = $module->get_sync_amount();
+
+                //ACTIVIDADES
+                $modulo->listaActividades = array();
+                /** @var activity $activity */
+                foreach ($module->get_activities() as $activity){
+                    if($activity->is_mandatory()){
+                        $actividad = new \stdClass();
+
+                        $actividad->codigoActividad = $activity->get_code();
+
+                        $modulo->listaActividades[] = $actividad;
+                    }
+                }
+
+                $alumno->listaModulos[] = $modulo;
+            }
 
             $request->listaAlumnos[] = $alumno;
         }

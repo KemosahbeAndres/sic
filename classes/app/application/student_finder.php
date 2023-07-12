@@ -69,4 +69,15 @@ class student_finder {
         return $student;
     }
 
+    public function all(int $courseid): array {
+        $course = $this->courseFinder->execute($courseid);
+        $students = $this->context->students->execute($courseid);
+        /** @var student $student */
+        foreach ($students as $key=>$student){
+            $student->set_course($course);
+            $this->dataLoader->execute($student);
+        }
+        return $students;
+    }
+
 }

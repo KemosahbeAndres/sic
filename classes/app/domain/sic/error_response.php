@@ -22,15 +22,16 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_sic\app\application;
+namespace block_sic\app\domain\sic;
 
-use block_sic\app\infraestructure\persistence\repository_context;
-
-class resume_course_loader {
-    private $context;
-    private $courseLoader;
-    public function __construct(repository_context $context){
-        $this->context = $context;
-
+class error_response extends sic_response {
+    public function __construct(object $response) {
+        parent::__construct($response);
+        if(is_array($response->datosEnviados)){
+            $this->payloads = $response->datosEnviados;
+        }
+        if(is_array($response->datosError)){
+            $this->errors = $response->datosError;
+        }
     }
 }
