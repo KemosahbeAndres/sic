@@ -76,7 +76,7 @@ class modules_repository implements imodules_repository {
 
         if (empty(trim($module->code)) || $module->startdate <= 0 || $module->enddate <= 0
         || $module->sync <= 0 || $module->async <= 0) {
-            return;
+            return false;
         }
         if ($DB->record_exists($table, ['id' => $module->id])) {
             $record = $DB->get_record($table, ['id' => $object->id], '*', 'MUST_EXISTS');
@@ -87,6 +87,7 @@ class modules_repository implements imodules_repository {
             $object->created = time();
             $DB->insert_record($table, $object);
         }
+        return true;
     }
     public function dettach(int $moduleid) {
         global $DB;

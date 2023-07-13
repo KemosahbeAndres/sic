@@ -27,15 +27,12 @@ namespace block_sic\app\controller;
 use block_sic\app\domain\request;
 use block_sic\app\domain\response;
 use block_sic\app\infraestructure\persistence\repository_context;
-use block_sic\app\utils\Dates;
-use core\session\exception;
 
 class module_controller extends controller {
     public function __construct(repository_context $context) {
         parent::__construct($context);
         $this->content->coursepage = true;
     }
-
     public function creating(request $request): response {
         $this->content->courseid = intval($request->params->courseid);
         return $this->response('course/module/create');
@@ -50,8 +47,8 @@ class module_controller extends controller {
                 $id = intval($request->params->moduleid);
             }
             $code = trim(strval($request->params->code));
-            $startdate = strtotime($request->params->startdate);
-            $enddate = strtotime($request->params->enddate);
+            $startdate = strtotime(trim(strval($request->params->startdate)));
+            $enddate = strtotime(trim(strval($request->params->enddate)));
             $sync = intval($request->params->sync);
             $async = intval($request->params->async);
 
@@ -68,15 +65,12 @@ class module_controller extends controller {
                 'async' => $async,
             ];
 
-            echo "<br>";
-            echo "Timestamp: ".$startdate;
-            echo "<br>";
-            echo "Fecha:".Dates::format_date_time($startdate);
-            echo "<br>";
-
-            $this->context->modules->attach_to($module, $courseid);
-            $message = "Modulo guardado con exito!";
-
+            $result = $this->context->modules->attach_to($module, $courseid);
+            if($result == false){
+                $message = "No se pudo guardar el modulo!";
+            }else{
+                $message = "Modulo guardado con exito!";
+            }
         }catch (\exception $e){
             return $this->redirect('course', $request->params,'Error. Datos ingresados invalidos!');
         }
